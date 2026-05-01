@@ -1,0 +1,12 @@
+{
+  "imports": {
+    "supabase": "https://esm.sh/@supabase/supabase-js@2.45.4"
+  },
+  "tasks": {
+    "keys": "deno run --allow-write scripts/generate-signing-keys.ts"
+  },
+  "fmt": {
+    "indentWidth": 4,
+    "lineWidth": 100
+  }
+}

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 — сторінку не знайдено · Vartovy</title>
+  <meta name="description" content="Сторінку не знайдено. Поверніться на головну Vartovy." />
+  <meta name="theme-color" content="#0b0e14" />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/assets/img/favicon.ico" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <meta name="google" content="notranslate" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/index.html"><img src="/assets/img/logo.png" alt="Vartovy" /><span data-no-translate>Vartovy</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="/pages/features.html">Features</a></li>
+      <li><a href="/pages/security.html">Security</a></li>
+      <li><a href="/pages/pricing.html">Plans</a></li>
+      <li><a href="/pages/download.html">Download</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a class="btn btn--primary" href="/pages/download.html">Try it</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container text-center">
+      <span class="eyebrow">Error 404</span>
+      <h1 style="font-size:clamp(3rem,7vw,5rem);margin-bottom:.4em;">
+        <span style="color:var(--brand)">404</span> · сторінку не знайдено
+      </h1>
+      <p class="lead" style="margin: 0 auto;">Можливо, ви ввели адресу з помилкою або сторінку було переміщено. Нічого критичного — просто почніть з головної.</p>
+      <div class="hero-cta" style="justify-content:center;">
+        <a class="btn btn--primary btn--lg" href="/index.html">На головну</a>
+        <a class="btn btn--ghost btn--lg" href="/pages/contact.html">Написати нам</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Vartovy. All rights reserved.</span>
+      <span>Built on a privacy-by-design principle.</span>
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

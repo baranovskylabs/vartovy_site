@@ -1,0 +1,19 @@
+# Cloudflare Pages redirects
+# Docs: https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Прим.: hash-фрагменти (#contact) Cloudflare не бачить — старе посилання
+# на /pages/download.html#contact браузер усе одно підставить #contact
+# вже після завантаження сторінки.
+
+# Aliases без префіксу /pages/
+/features    /pages/features.html    301
+/security    /pages/security.html    301
+/pricing     /pages/pricing.html     301
+/plans       /pages/pricing.html     301
+/download    /pages/download.html    301
+/about       /pages/about.html       301
+/contact     /pages/contact.html     301
+/privacy     /pages/privacy.html     301
+/terms       /pages/terms.html       301
+/refund      /pages/refund.html      301
+/activate    /pages/activate.html    301

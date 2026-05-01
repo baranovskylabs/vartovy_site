@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Активація Pro — Vartovy</title>
+  <meta name="description" content="Перевірка та активація Pro-ключа Vartovy. Введіть ключ з email-листа, отриманого після покупки." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="../assets/img/favicon.ico" />
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <meta name="google" content="notranslate" />
+  <style>
+    .activate-card {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 2rem;
+      border: 1px solid var(--border, #2a2f3a);
+      border-radius: 14px;
+      background: var(--surface, #11151c);
+    }
+    .activate-card label {
+      display: block;
+      font-weight: 600;
+      margin-top: 1rem;
+      margin-bottom: .35rem;
+    }
+    .activate-card input[type="text"],
+    .activate-card select {
+      width: 100%;
+      padding: .75rem .9rem;
+      border: 1px solid var(--border, #2a2f3a);
+      border-radius: 10px;
+      background: var(--bg, #0b0e14);
+      color: inherit;
+      font: inherit;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      letter-spacing: .04em;
+    }
+    .activate-card .row { margin-top: 1.2rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+    .activate-result {
+      margin-top: 1.2rem;
+      padding: .9rem 1rem;
+      border-radius: 10px;
+      font-size: .95rem;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+    .activate-result--ok  { border-color: #1e8e4f; background: rgba(30,142,79,.08);  color: #6ee7a7; }
+    .activate-result--err { border-color: #b94747; background: rgba(185,71,71,.08); color: #ff9b9b; }
+    .activate-help { font-size: .9rem; color: var(--muted, #8b95a7); margin-top: 1rem; }
+  </style>
+  <link rel="canonical" href="https://vartovy.app/pages/activate.html" />
+  <meta property="og:url" content="https://vartovy.app/pages/activate.html" />
+  <meta property="og:site_name" content="Vartovy" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0b0e14" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo.png" alt="" /><span data-no-translate>Vartovy</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="../index.html" data-i18n="nav.home">Home</a></li>
+      <li><a href="features.html" data-i18n="nav.features">Features</a></li>
+      <li><a href="security.html" data-i18n="nav.security">Security</a></li>
+      <li><a href="pricing.html" data-i18n="nav.pricing">Plans</a></li>
+      <li><a href="download.html" data-i18n="nav.download">Download</a></li>
+      <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <span class="lang-switcher-mount"></span>
+      <button class="theme-toggle" type="button" data-i18n="theme.toLight">Light</button>
+      <a class="btn btn--primary" href="download.html" data-i18n="cta.try">Try it</a>
+      <button class="nav-toggle" type="button" aria-label="Меню">?</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="container text-center">
+      <span class="eyebrow">Pro</span>
+      <h1>Активація <span style="color:var(--brand)">Pro-ключа</span></h1>
+      <p class="lead" style="margin: 0 auto;">Введіть ключ з email-листа, який ви отримали після покупки. Активація потрібна один раз для кожного пристрою.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <form class="activate-card" id="activate-form" autocomplete="off">
+
+        <label for="license-key">Pro-ключ</label>
+        <input
+          type="text"
+          id="license-key"
+          name="license_key"
+          required
+          minlength="20"
+          maxlength="64"
+          spellcheck="false"
+          autocapitalize="characters"
+          placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+          aria-describedby="key-help"
+        />
+        <p id="key-help" class="activate-help" style="margin-top:.4rem;">
+          Формат: групи літер і цифр, розділені дефісами. Регістр не важливий.
+        </p>
+
+        <label for="action-type">Дія</label>
+        <select id="action-type" name="action">
+          <option value="activate">Активувати на цьому пристрої</option>
+          <option value="validate">Лише перевірити дійсність ключа</option>
+        </select>
+
+        <div class="row">
+          <button type="submit" id="activate-submit" class="btn btn--primary">Перевірити</button>
+          <a class="btn btn--ghost" href="pricing.html">Я ще не купував Pro</a>
+        </div>
+
+        <div id="activate-result" class="activate-result" hidden></div>
+
+        <p class="activate-help">
+          Не отримали лист? Перевірте папку «Спам». Якщо ключа немає протягом 5 хвилин після оплати —
+          напишіть на <a href="mailto:support@vartovy.app">support@vartovy.app</a>,
+          вкажіть email, з якого здійснено покупку.
+        </p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Vartovy. All rights reserved.</span>
+      <span>Built on a privacy-by-design principle.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/i18n.js?v=9"></script>
+<script src="../assets/js/main.js?v=9"></script>
+<script src="../assets/js/activate.js?v=1"></script>
+</body>
+</html>

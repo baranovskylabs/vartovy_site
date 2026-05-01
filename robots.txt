@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Активаційна сторінка не для індексації — для прямих посилань
+Disallow: /pages/activate.html
+
+Sitemap: https://vartovy.app/sitemap.xml

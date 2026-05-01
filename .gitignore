@@ -1,0 +1,18 @@
+# Node / npm
+node_modules/
+npm-debug.log*
+
+# Server secrets — НІКОЛИ не комітити
+server/.env
+server/keys/
+server/*.pem
+server/*.key
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+*.swp
