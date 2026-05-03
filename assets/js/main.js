@@ -19,7 +19,7 @@
 
   function setTheme(next) {
     root.setAttribute('data-theme', next);
-    try { localStorage.setItem(THEME_KEY, next); } catch (_) {}
+    try { localStorage.setItem(THEME_KEY, next); } catch (_) { }
     updateThemeButton(next);
   }
   function currentTheme() {
@@ -113,7 +113,7 @@
     if (!ls) return;
     const list = getRecentSubmissions();
     list.push(Date.now());
-    try { ls.setItem(RATE_KEY, JSON.stringify(list)); } catch (_) {}
+    try { ls.setItem(RATE_KEY, JSON.stringify(list)); } catch (_) { }
   }
 
   function formatHoursLeft(submissions) {
@@ -197,6 +197,16 @@
         return;
       }
 
+      const consentEl = form.querySelector('input[name="consent"]');
+      if (!consentEl || !consentEl.checked) {
+        if (consentEl) {
+          consentEl.setCustomValidity(tr('form.consentRequired') || 'You must agree to the Privacy Policy and Terms of Use.');
+          form.reportValidity();
+          consentEl.setCustomValidity('');
+        }
+        return;
+      }
+
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -216,7 +226,7 @@
       })
         .then((res) => res.json().catch(() => ({})).then((body) => ({ ok: res.ok, body })))
         .then(({ ok, body }) => {
-          if (!ok || (body && body.success === 'false')) {
+          if (!ok || !body || body.success === 'false' || body.success === false) {
             showStatus('form.error', 'error');
             if (submit) submit.disabled = false;
             return;

@@ -109,7 +109,25 @@ svgexport assets\img\og-image.svg assets\img\og-image.png 1200:630
 
 ---
 
-## 7. Чек-лист перед публічним анонсом
+## 7. Cloudflare KV — rate limit для форми зворотного зв'язку
+
+Форма (`/pages/contact.html`) тепер надсилає POST на Cloudflare Pages Function
+`/api/contact` замість прямого FormSubmit. Function перевіряє ліміт 3 повідомлення
+на IP на добу через KV-сховище.
+
+### Налаштування KV namespace
+1. Cloudflare Dashboard → **Workers & Pages** → **KV** → **Create namespace** → ім'я `CONTACT_RATE` → **Add**.
+2. У проєкті Pages → **Settings** → **Functions** → **KV namespace bindings** → **Add binding**:
+   - Variable name: `CONTACT_RATE`
+   - KV namespace: виберіть щойно створений `CONTACT_RATE`
+3. Зберегти і зробити новий деплой (push до репо).
+
+> Без прив'язки KV namespace функція все одно працює, але rate limit по IP
+> **не застосовується** (пропускається). Тобто форма буде доступна, але не обмежена.
+
+---
+
+## 8. Чек-лист перед публічним анонсом
 
 - [ ] Cloudflare Pages зібрано без помилок.
 - [ ] DNS `vartovy.app` і `www.vartovy.app` відповідає `pages.dev` CNAME.
