@@ -218,6 +218,9 @@
       const data = new FormData(form);
       const payload = {};
       data.forEach((v, k) => { payload[k] = v; });
+      // Strip internal tracking field — FormSubmit ignores it but it looks noisy in email
+      delete payload['_form_opened_at'];
+      // FormSubmit uses the 'email' field as reply-to automatically
 
       fetch(form.action, {
         method: 'POST',
