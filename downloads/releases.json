@@ -1,0 +1,39 @@
+{
+  "$schema": "./releases.schema.json",
+  "product": "Vartovy",
+  "platform": "windows",
+  "latest": "1.0.0",
+  "channels": {
+    "stable": "1.0.0"
+  },
+  "releases": [
+    {
+      "version": "1.0.0",
+      "channel": "stable",
+      "date": "2026-05-06",
+      "title": "Vartovy 1.0.0 — Перший публічний реліз",
+      "summary": "Локальний сейф для Windows 10/11 з AES-256-GCM, Argon2id, багаторівневим розблокуванням і повною роботою офлайн.",
+      "highlights": [
+        "Локальне сховище профілів — без хмари",
+        "AES-256-GCM шифрування записів і файлів",
+        "Argon2id для майстер-пароля",
+        "Багаторівневе розблокування: пароль, PIN, графічний ключ, Windows Hello",
+        "Recovery-код для відновлення без бекдору",
+        "Локальний журнал подій"
+      ],
+      "files": [
+        {
+          "kind": "portable",
+          "label": "Portable (x64) — без інсталяції",
+          "filename": "Vartovy-1.0.0-x64-Portable.exe",
+          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.0/Vartovy-1.0.0-x64-Portable.exe",
+          "size": 99971249,
+          "sizeHuman": "95.3 MB",
+          "arch": "x64",
+          "os": "Windows 10/11",
+          "sha256": "1E699FC5F88248779DAEB99D36EFF28BE6BE7D42F3E8CD59B4215C782F115E4D"
+        }
+      ]
+    }
+  ]
+}
