@@ -42,10 +42,33 @@
 3. Додати `www.vartovy.app` як другий custom domain з redirect-ом на apex.
 
 ### 2.4. Файли конфігурації (вже у репо)
-- `_headers` — security headers (HSTS, X-Frame-Options, CSP-friendly).
-- `_redirects` — короткі URL aliases (`/pricing` → `/pages/pricing.html`) і legacy-редірект `#contact`.
+- `_headers` — security headers (HSTS, X-Frame-Options, CSP-friendly) + force-download для `/downloads/*.exe`.
+- `_redirects` — короткі URL aliases (`/pricing`, `/versions`, `/latest` → останній .exe) і legacy-редірект `#contact`.
 - `404.html` — кастомна сторінка помилки.
 - `sitemap.xml`, `robots.txt` — для пошукових систем.
+
+### 2.5. Білди застосунку (`/downloads/`)
+
+| Файл | Розмір | Чим є |
+|------|--------|-------|
+| `downloads/Vartovy-1.0.0-x64-Portable.exe` | 95.3 MB | Перший публічний реліз |
+| `downloads/releases.json` | < 1 KB | Маніфест версій (читається з `/pages/versions.html`) |
+| `downloads/README.md` | — | Інструкція як додавати нові версії |
+
+> **Важливо.** Cloudflare Pages обмежує одиничний файл у репо до **25 MB**.
+> 95-мегабайтний `.exe` потрібно віддавати інакше. Два надійні варіанти:
+>
+> 1. **GitHub Releases** — створити реліз `v1.0.0`, прикріпити `.exe`, потім у
+>    `downloads/releases.json` поміняти `url` на `https://github.com/<user>/<repo>/releases/download/v1.0.0/Vartovy-1.0.0-x64-Portable.exe`.
+>    `_redirects` додатково віддасть `/latest` як 302.
+> 2. **Cloudflare R2** — створити bucket `vartovy-builds`, увімкнути public access або
+>    повісити Worker `https://dl.vartovy.app/*`, скласти `.exe` туди, оновити `url` у
+>    маніфесті. Дешево і без лімітів.
+>
+> Локально файл лежить у `downloads/` для зручності розробки і тестового пуша
+> в репо, який підтримує LFS / великі файли. Перед першим деплоєм на CF Pages
+> або винесіть його у GitHub Release / R2, або додайте до `.gitignore` і
+> залийте на CF R2 окремо.
 
 ---
 

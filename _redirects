@@ -11,6 +11,9 @@
 /pricing     /pages/pricing.html     301
 /plans       /pages/pricing.html     301
 /download    /pages/download.html    301
+/versions    /pages/versions.html    301
+/releases    /pages/versions.html    301
+/latest      /downloads/Vartovy-1.0.0-x64-Portable.exe   302
 /about       /pages/about.html       301
 /contact     /pages/contact.html     301
 /privacy     /pages/privacy.html     301

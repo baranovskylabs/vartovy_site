@@ -20,6 +20,19 @@
 /*.html
   Cache-Control: public, max-age=300, must-revalidate
 
+# Бінарники Vartovy — довгий immutable кеш + force-download
+/downloads/*.exe
+  Content-Type: application/octet-stream
+  Content-Disposition: attachment
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# Маніфест версій — короткий кеш, щоб /versions завжди бачив свіжий список
+/downloads/releases.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
 # Машинні файли
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8

@@ -16,3 +16,9 @@ desktop.ini
 # Editor
 .vscode/settings.json
 *.swp
+
+# Великі бінарники білдів — зберігаються у GitHub Releases, не в репо.
+downloads/*.exe
+downloads/*.msi
+downloads/*.zip
+
