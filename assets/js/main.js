@@ -227,9 +227,12 @@
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload),
       })
-        .then((res) => res.json().catch(() => ({})).then((body) => ({ ok: res.ok, body })))
+        .then((res) => res.json().catch(() => null).then((body) => ({ ok: res.ok, body })))
         .then(({ ok, body }) => {
-          if (!ok || !body || body.success === 'false' || body.success === false) {
+          // FormSubmit AJAX returns {"success":"true"} on success.
+          // Trust explicit "true" from FormSubmit, or fall back to HTTP 2xx.
+          var fsSuccess = body && (body.success === 'true' || body.success === true);
+          if (!ok && !fsSuccess) {
             showStatus('form.error', 'error');
             if (submit) submit.disabled = false;
             return;
