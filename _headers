@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Cloudflare Pages headers — security + caching
 # Docs: https://developers.cloudflare.com/pages/configuration/headers/
 
@@ -41,3 +42,48 @@
 /robots.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600
+=======
+# Cloudflare Pages headers — security + caching
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(self "https://*.paddle.com")
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-XSS-Protection: 1; mode=block
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://translate.google.com https://translate.googleapis.com https://*.paddle.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://translate.googleapis.com https://*.supabase.co https://formsubmit.co https://*.paddle.com https://cloudflareinsights.com; frame-src https://*.paddle.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+
+# Static assets — довгий кеш
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML — короткий кеш, щоб оновлення підтягувались
+/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Бінарники Vartovy — довгий immutable кеш + force-download
+/downloads/*.exe
+  Content-Type: application/octet-stream
+  Content-Disposition: attachment
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# Маніфест версій — короткий кеш, щоб /versions завжди бачив свіжий список
+/downloads/releases.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+
+# Машинні файли
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=3600
+>>>>>>> 975f581a7ee1d7331b8976f89ad9283d3b0be565

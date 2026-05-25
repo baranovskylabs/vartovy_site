@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Node / npm
 node_modules/
 npm-debug.log*
@@ -22,3 +23,29 @@ downloads/*.exe
 downloads/*.msi
 downloads/*.zip
 
+=======
+# Node / npm
+node_modules/
+npm-debug.log*
+
+# Server secrets — НІКОЛИ не комітити
+server/.env
+server/keys/
+server/*.pem
+server/*.key
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+*.swp
+
+# Великі бінарники білдів — зберігаються у GitHub Releases, не в репо.
+downloads/*.exe
+downloads/*.msi
+downloads/*.zip
+
+>>>>>>> 975f581a7ee1d7331b8976f89ad9283d3b0be565
