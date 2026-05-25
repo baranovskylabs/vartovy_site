@@ -1,5 +1,256 @@
-﻿<!doctype html>
-<html lang="uk"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Безпека — Vartovy</title><meta name="description" content="Security model Vartovy." /><link rel="icon" href="../assets/img/favicon.ico" /><link rel="stylesheet" href="../assets/css/styles.css?v=13" /><meta name="theme-color" content="#0b0e14" /></head><body>
-<header class="site-header"><div class="container nav"><a class="brand" href="../index.html"><img src="../assets/img/logo.png" alt="" /><span data-no-translate>Vartovy</span></a><nav><ul class="nav-links"><li><a href="../index.html">Home</a></li><li><a href="features.html">Features</a></li><li><a href="security.html">Security</a></li><li><a href="pricing.html">Plans</a></li><li><a href="download.html">Download</a></li><li><a href="contact.html">Contact</a></li></ul></nav><div class="nav-actions"><span class="lang-switcher-mount"></span><button class="theme-toggle" type="button">Light</button><a class="btn btn--primary" href="download.html">Try it</a><button class="nav-toggle" type="button" aria-label="Меню">≡</button></div></div></header>
-<main><section class="hero"><div class="container text-center"><span class="eyebrow">Security</span><h1>Безпека на перевіреній криптографії</h1><p class="lead" style="margin:0 auto;">Ми використовуємо стандартні алгоритми та локальну модель довіри без хмарного дешифрування.</p></div></section><section class="section section--alt"><div class="container"><div class="grid grid--2"><div class="card"><h3>Що захищаємо</h3><p>Вміст сейфа, вкладення, історію подій і резервні копії.</p></div><div class="card"><h3>Що не робимо</h3><p>Не зберігаємо ваші паролі, не передаємо ключі, не маємо бекдору.</p></div><div class="card"><h3>Криптографія</h3><p>AES-256-GCM для даних, Argon2id для ключа, локальна перевірка цілісності.</p></div><div class="card"><h3>Операційна безпека</h3><p>Автоблокування, lockout і контроль доступу на рівні пристрою.</p></div></div></div></section></main>
-<footer class="site-footer"><div class="container"><div class="footer-bottom"><span>© <span id="year"></span> Vartovy. All rights reserved.</span><span>Built on a privacy-by-design principle.</span></div></div></footer><script src="../assets/js/i18n.js?v=13"></script><script src="../assets/js/main.js?v=13"></script></body></html>
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Безпека — Vartovy</title>
+  <meta name="description" content="Модель безпеки Vartovy: AES-256-GCM, Argon2id, Ed25519, zero-knowledge архітектура. Від чого захищаємо і від чого — ні." />
+  <meta name="theme-color" content="#0b0e14" />
+  <link rel="canonical" href="https://vartovy.app/pages/security.html" />
+  <link rel="icon" href="../assets/img/favicon.ico" />
+  <link rel="stylesheet" href="../assets/css/styles.css?v=14" />
+  <meta name="google" content="notranslate" />
+  <meta property="og:title" content="Модель безпеки Vartovy" />
+  <meta property="og:description" content="AES-256-GCM, Argon2id, Ed25519. Zero-knowledge. Від чого захищаємо і від чого — ні." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vartovy.app/pages/security.html" />
+  <meta property="og:site_name" content="Vartovy" />
+  <meta property="og:image" content="https://vartovy.app/assets/img/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../index.html"><img src="../assets/img/logo.png" alt="" /><span data-no-translate>Vartovy</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="../index.html" data-i18n="nav.home">Home</a></li>
+      <li><a href="features.html" data-i18n="nav.features">Features</a></li>
+      <li><a href="security.html" data-i18n="nav.security">Security</a></li>
+      <li><a href="pricing.html" data-i18n="nav.pricing">Plans</a></li>
+      <li><a href="download.html" data-i18n="nav.download">Download</a></li>
+      <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <span class="lang-switcher-mount"></span>
+      <button class="theme-toggle" type="button" data-i18n="theme.toLight">Light</button>
+      <a class="btn btn--primary" href="download.html" data-i18n="cta.try">Try it</a>
+      <button class="nav-toggle" type="button" aria-label="Меню">≡</button>
+    </div>
+  </div>
+</header>
+<main>
+
+  <section class="hero">
+    <div class="container text-center">
+      <span class="eyebrow">Security</span>
+      <h1>Безпека на <span style="color:var(--brand)">перевіреній криптографії</span></h1>
+      <p class="lead" style="margin:0 auto;">Жодних власних алгоритмів. Жодних хмарних ключів. Тільки стандарти, що пройшли незалежний аудит — і чесна модель загроз.</p>
+    </div>
+  </section>
+
+  <!-- Криптографічний стек -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>🔐 Криптографічний стек</h2>
+        <p class="dim">Кожен алгоритм обраний з конкретної причини.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="card">
+          <div class="icon">🔒</div>
+          <h3>AES-256-GCM — шифрування даних</h3>
+          <p>Symmetric AEAD-шифрування з 256-бітним ключем. GCM-режим (Galois/Counter Mode) забезпечує і конфіденційність, і автентифікацію — будь-яке пошкодження або підробка файлу виявляється при розшифруванні. Унікальний nonce для кожного запису виключає повторне використання ключового матеріалу.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🧂</div>
+          <h3>Argon2id — виведення ключа з пароля</h3>
+          <p>Переможець Password Hashing Competition (2015). Memory-hard алгоритм — для атаки brute-force потрібно не лише процесорний час, а й значний обсяг оперативної пам'яті. Це робить атаки на GPU/FPGA/ASIC дорогими навіть при слабкому паролі. Параметри (memory, iterations) адаптовані до реального «залізa».</p>
+        </div>
+        <div class="card">
+          <div class="icon">✍️</div>
+          <h3>Ed25519 — підпис ліцензій</h3>
+          <p>Підпис Pro-ключів виконується приватним ключем сервера за алгоритмом Ed25519 (Edwards-curve DSA). Десктоп-клієнт верифікує підпис публічним ключем локально — без мережевого запиту. Це означає: ліцензія дійсна офлайн назавжди, навіть якщо наш сервер недоступний.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🎲</div>
+          <h3>CSPRNG — генератор випадкових чисел</h3>
+          <p>Всі nonce, salt і ключові матеріали генеруються через криптографічно стійкий RNG операційної системи (Windows CNG / BCryptGenRandom). Жодної псевдовипадковості на основі часу або лічильника.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zero-knowledge -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>🫥 Zero-knowledge архітектура</h2>
+        <p class="dim">Ми технічно не можемо прочитати ваш сейф — не лише за політикою.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h4>Ключ шифрування не залишає пристрій</h4>
+            <p class="muted">Майстер-пароль → Argon2id → ключ AES-256. Ключ існує лише в пам'яті процесу під час роботи. На диск записується лише зашифрований файл сейфа — ніколи ключ.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h4>Сервер не бачить вміст</h4>
+            <p class="muted">Наш сервер обробляє лише активацію ліцензій (перевірка підпису Ed25519) і опціональну перевірку оновлень. Жодних даних сейфа — навіть зашифрованих — не передається.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h4>Бекдору не існує технічно</h4>
+            <p class="muted">У нас немає «майстер-ключа» для розшифрування вашого сейфа. Якщо ви забудете пароль і recovery-код — ми не зможемо відновити доступ. Це архітектурна гарантія, а не обіцянка.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h4>Офлайн-верифікація ліцензії</h4>
+            <p class="muted">Після першої активації Pro-ключ зберігається як підписаний Ed25519 токен. Вся подальша перевірка — локальна, без мережі. 14-денний офлайн-буфер — на випадок відсутності інтернету.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Модель загроз -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>⚖️ Модель загроз — чесно</h2>
+        <p class="dim">Ми захищаємо від реальних загроз і відверто кажемо про обмеження.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="card" style="border-color:var(--brand)">
+          <h3 style="color:var(--brand)">✅ Від чого захищаємо</h3>
+          <ul style="margin:12px 0 0;padding-left:18px;color:var(--text-muted);line-height:1.9;">
+            <li>Злам хмарного провайдера (дані не там)</li>
+            <li>Витік бази даних (у нас немає вашого сейфа)</li>
+            <li>Підбір пароля по файлу (Argon2id + uniq. salt)</li>
+            <li>Підробка ліцензійних ключів (Ed25519)</li>
+            <li>Несанкціонований доступ на пристрої (автоблок, lockout)</li>
+            <li>Пошкодження даних непоміченим (GCM автентифікація)</li>
+            <li>Юридичні запити до нас (у нас немає вашого вмісту)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--text-dim)">⚠️ Від чого не захищаємо</h3>
+          <ul style="margin:12px 0 0;padding-left:18px;color:var(--text-muted);line-height:1.9;">
+            <li>Компрометація самого пристрою (keylogger, RAT)</li>
+            <li>Фізичний доступ при розблокованому сейфі</li>
+            <li>Слабкий майстер-пароль (ваша відповідальність)</li>
+            <li>Втрата і пароля, і recovery-коду одночасно</li>
+            <li>Вразливості в ОС Windows або .NET runtime</li>
+            <li>«Shoulder surfing» — коли хтось дивиться вам через плече</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Верифікація файлу -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>🔎 Верифікація файлу інсталятора</h2>
+        <p class="dim">Переконайтесь, що завантажили оригінальний файл — не підроблений.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="card">
+          <div class="icon">🏷️</div>
+          <h3>Перевірка SHA-256 хешу</h3>
+          <p>Кожен реліз публікується з SHA-256 хешем на <a href="download.html">сторінці завантаження</a>. Після скачування перевірте:</p>
+          <pre style="margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:.82rem;overflow-x:auto;color:var(--brand);font-family:var(--font-mono)">Get-FileHash .\Vartovy-Setup.exe -Algorithm SHA256</pre>
+          <p style="margin-top:8px;font-size:.88rem;">Хеш у PowerShell має збігатися з опублікованим.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📜</div>
+          <h3>Сертифікат підпису</h3>
+          <p>Інсталятор підписаний code signing сертифікатом. Windows SmartScreen може показати попередження для нових файлів — це нормально для нового видавця. Перевірте підпис: ПКМ на файлі → Властивості → Цифрові підписи.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transparent + GitHub -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>🐙 Прозорість і відповідальне розкриття</h2>
+      </div>
+      <div class="grid grid--3">
+        <div class="card">
+          <div class="icon">🐙</div>
+          <h3>GitHub</h3>
+          <p>Код сайту і серверної частини (Supabase Edge Functions, модель ліцензування) доступний на GitHub для перегляду.</p>
+          <a class="btn btn--ghost" href="https://github.com/baranovskylabs" target="_blank" rel="noopener noreferrer" style="margin-top:14px;">Переглянути →</a>
+        </div>
+        <div class="card">
+          <div class="icon">📧</div>
+          <h3>Відповідальне розкриття</h3>
+          <p>Знайшли вразливість? Надішліть на <a href="mailto:support@vartovy.app">support@vartovy.app</a> з темою <strong>Security</strong>. Розглянемо конфіденційно та оперативно.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📋</div>
+          <h3>Аудит у планах</h3>
+          <p>Незалежний security-аудит криптографічного ядра заплановано. Після проведення — результати будуть опубліковані тут повністю.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Питання про безпеку?</h2>
+        <p class="muted">Пишіть напряму — без бот-автовідповідей.</p>
+        <div class="btns">
+          <a class="btn btn--primary btn--lg" href="contact.html">Написати</a>
+          <a class="btn btn--ghost btn--lg" href="download.html">Завантажити і перевірити</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><img src="../assets/img/logo.png" alt="" /><span data-no-translate>Vartovy</span></a>
+        <p class="dim mt-2"><span data-i18n="footer.tagline">Offline-first desktop vault. Local encryption. Full user control.</span></p>
+      </div>
+      <div><h4 data-i18n="footer.product">Product</h4><ul>
+        <li><a href="features.html" data-i18n="nav.features">Features</a></li>
+        <li><a href="security.html" data-i18n="nav.security">Security</a></li>
+        <li><a href="pricing.html" data-i18n="nav.pricing">Plans</a></li>
+        <li><a href="download.html" data-i18n="nav.download">Download</a></li>
+      </ul></div>
+      <div><h4 data-i18n="footer.docs">Documents</h4><ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Use</a></li>
+        <li><a href="refund.html">Refund Policy</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul></div>
+      <div><h4 data-i18n="footer.contacts">Contacts</h4><ul>
+        <li><a href="mailto:support@vartovy.app">support@vartovy.app</a></li>
+        <li><a href="contact.html" data-i18n="footer.writeForm">Write via form</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span><span data-i18n="footer.rights">© <span id="year"></span> Vartovy. All rights reserved.</span></span>
+      <span><span data-i18n="footer.builtBy">Built on a privacy-by-design principle.</span></span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/js/i18n.js?v=14"></script>
+<script src="../assets/js/main.js?v=14"></script>
+</body>
+</html>
