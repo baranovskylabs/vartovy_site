@@ -216,27 +216,17 @@
       if (submit) submit.disabled = true;
 
       const data = new FormData(form);
-      const payload = {};
-      data.forEach((v, k) => { payload[k] = v; });
-      // Strip internal tracking field — FormSubmit ignores it but it looks noisy in email
-      delete payload['_form_opened_at'];
-      // FormSubmit uses the 'email' field as reply-to automatically
+      // Remove client-side tracking field before sending
+      data.delete('_form_opened_at');
 
+      // Use no-cors so FormSubmit standard endpoint works without CORS preflight
       fetch(form.action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload),
+        mode: 'no-cors',
+        body: data,
       })
-        .then((res) => res.json().catch(() => null).then((body) => ({ ok: res.ok, body })))
-        .then(({ ok, body }) => {
-          // FormSubmit AJAX returns {"success":"true"} on success.
-          // Trust explicit "true" from FormSubmit, or fall back to HTTP 2xx.
-          var fsSuccess = body && (body.success === 'true' || body.success === true);
-          if (!ok && !fsSuccess) {
-            showStatus('form.error', 'error');
-            if (submit) submit.disabled = false;
-            return;
-          }
+        .then(() => {
+          // no-cors returns opaque response; assume email was sent successfully
           recordSubmission();
           form.reset();
           showStatus('form.success', 'success', { sticky: true });
