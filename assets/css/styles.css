@@ -583,33 +583,27 @@ font[style*="background-color"] { background: transparent !important; box-shadow
   transition: border-color .15s ease, box-shadow .15s ease;
 }
 .form-field textarea { resize: vertical; min-height: 120px; font-family: var(--font-sans); }
-.textarea-wrapper { position: relative; }
-.textarea-wrapper textarea { width: 100%; }
-.voice-btn {
-  position: absolute;
-  bottom: 8px; right: 10px;
-  width: 30px; height: 30px;
-  border-radius: 50%;
+
+/* Character counter */
+.char-counter { font-size: .8rem; color: var(--text-dim); text-align: right; margin-top: 3px; }
+.char-counter.is-warn { color: var(--warning); }
+.char-counter.is-over  { color: var(--danger); }
+
+/* Copy-email inline button */
+.copy-email-wrap { display: inline-flex; align-items: center; gap: 8px; }
+.copy-email-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: transparent;
   border: 1px solid var(--border);
-  background: var(--bg-elev);
-  color: var(--text-muted);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-size: .78rem;
+  padding: 2px 8px;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0;
-  transition: background .15s, color .15s, border-color .15s;
-  z-index: 1;
+  transition: color .15s ease, border-color .15s ease;
 }
-.voice-btn:hover { background: var(--brand-soft); color: var(--brand); border-color: var(--brand); }
-.voice-btn.is-listening {
-  background: rgba(239,68,68,.12);
-  color: #ef4444;
-  border-color: #ef4444;
-  animation: pulse-mic 1.5s ease infinite;
-}
-@keyframes pulse-mic {
-  0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.35); }
-  50%      { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
-}
+.copy-email-btn:hover { color: var(--brand); border-color: var(--brand); }
+.copy-email-btn.copied { color: var(--brand); border-color: var(--brand); }
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {

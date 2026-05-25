@@ -80,7 +80,8 @@
     markActive();
     setYear();
     initContactForm();
-    initVoiceInput();
+    initCharCounter();
+    initCopyEmail();
     cleanLegacyParams();
   });
 
@@ -236,7 +237,44 @@
     });
   }
 
-  function initVoiceInput() {
+  // --- Char counter for message textarea ---
+  function initCharCounter() {
+    var ta = document.getElementById('contactMessage');
+    var counter = document.getElementById('charCounter');
+    if (!ta || !counter) return;
+    var max = parseInt(ta.getAttribute('maxlength'), 10) || 4000;
+    function update() {
+      var len = ta.value.length;
+      counter.textContent = len + ' / ' + max;
+      counter.classList.toggle('is-warn', len >= max * 0.85 && len < max);
+      counter.classList.toggle('is-over', len >= max);
+    }
+    ta.addEventListener('input', update);
+    update();
+  }
+
+  // --- Copy email button ---
+  function initCopyEmail() {
+    var btn = document.getElementById('copyEmailBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var email = btn.getAttribute('data-copy') || '';
+      var labelCopied = btn.getAttribute('data-label-copied') || 'Copied!';
+      var labelCopy   = btn.getAttribute('data-label-copy')   || 'Copy';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(function () {
+          btn.textContent = labelCopied;
+          btn.classList.add('copied');
+          setTimeout(function () {
+            btn.textContent = labelCopy;
+            btn.classList.remove('copied');
+          }, 2000);
+        })['catch'](function () {});
+      }
+    });
+  }
+
+  function _unusedVoiceInput() {
     var btn = document.getElementById('voiceBtn');
     if (!btn) return;
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
