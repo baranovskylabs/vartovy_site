@@ -80,6 +80,7 @@
     markActive();
     setYear();
     initContactForm();
+    initVoiceInput();
     cleanLegacyParams();
   });
 
@@ -233,6 +234,86 @@
       // Standard HTML form submit — FormSubmit sends email and redirects to _next (?sent=1)
       form.submit();
     });
+  }
+
+  function initVoiceInput() {
+    var btn = document.getElementById('voiceBtn');
+    if (!btn) return;
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { btn.hidden = true; return; }
+
+    var textarea = document.querySelector('textarea[name="message"]');
+    if (!textarea) return;
+
+    var rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+
+    var listening = false;
+    var baseText = '';
+    var langMap = {
+      'en':'en-GB','uk':'uk-UA','es':'es-ES','fr':'fr-FR','de':'de-DE',
+      'it':'it-IT','pt':'pt-PT','pl':'pl-PL','nl':'nl-NL','sv':'sv-SE',
+      'no':'nb-NO','fi':'fi-FI','cs':'cs-CZ','el':'el-GR','tr':'tr-TR',
+      'ar':'ar-SA','hi':'hi-IN','ja':'ja-JP','ko':'ko-KR','zh':'zh-CN'
+    };
+
+    function getLang() {
+      try {
+        var cur = window.VartovyI18n && VartovyI18n.current ? VartovyI18n.current : 'uk';
+        return langMap[cur] || document.documentElement.lang || 'uk-UA';
+      } catch (e) { return document.documentElement.lang || 'uk-UA'; }
+    }
+
+    rec.onresult = function (e) {
+      var interim = '', finalStr = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        var t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalStr += t;
+        else interim += t;
+      }
+      if (finalStr) {
+        var sep = baseText && !/\s$/.test(baseText) ? ' ' : '';
+        baseText += sep + finalStr.trim();
+      }
+      textarea.value = baseText + (interim ? (baseText ? ' ' : '') + interim : '');
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
+    rec.onerror = function (e) {
+      if (e.error !== 'no-speech' && e.error !== 'aborted') stop();
+    };
+
+    rec.onend = function () {
+      if (listening) { try { rec.start(); } catch (_) { stop(); } }
+    };
+
+    function start() {
+      baseText = textarea.value;
+      rec.lang = getLang();
+      try { rec.start(); } catch (_) { return; }
+      listening = true;
+      btn.classList.add('is-listening');
+      btn.title = 'Stop recording';
+      btn.setAttribute('aria-label', 'Stop recording');
+    }
+
+    function stop() {
+      listening = false;
+      rec.stop();
+      btn.classList.remove('is-listening');
+      btn.title = 'Voice input';
+      btn.setAttribute('aria-label', 'Voice input');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      if (listening) stop(); else start();
+    });
+
+    var form = document.getElementById('contactForm');
+    if (form) form.addEventListener('submit', function () { if (listening) stop(); });
   }
 
   function cleanLegacyParams() {
