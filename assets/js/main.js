@@ -176,6 +176,17 @@
     refreshRateState();
     document.addEventListener('vartovy:langchange', refreshRateState);
 
+    // Show success if redirected back from FormSubmit (?sent=1)
+    var sentParam = new URLSearchParams(location.search);
+    if (sentParam.get('sent') === '1') {
+      recordSubmission();
+      showStatus('form.success', 'success', { sticky: true });
+      refreshRateState();
+      if (history.replaceState) {
+        history.replaceState(null, '', location.pathname + location.hash);
+      }
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -215,29 +226,12 @@
       showStatus('form.sending', null);
       if (submit) submit.disabled = true;
 
-      const data = new FormData(form);
-      // Remove client-side tracking field before sending
-      data.delete('_form_opened_at');
+      // Disable tracking field so it doesn't appear as clutter in the email
+      var openedAtField = form.querySelector('#formOpenedAt');
+      if (openedAtField) openedAtField.disabled = true;
 
-      // Use no-cors so FormSubmit standard endpoint works without CORS preflight
-      fetch(form.action, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: data,
-      })
-        .then(() => {
-          // no-cors returns opaque response; assume email was sent successfully
-          recordSubmission();
-          form.reset();
-          showStatus('form.success', 'success', { sticky: true });
-          const after = getRecentSubmissions();
-          if (after.length < RATE_LIMIT && submit) submit.disabled = false;
-          else if (submit) submit.disabled = true;
-        })
-        .catch(() => {
-          showStatus('form.network', 'error');
-          if (submit) submit.disabled = false;
-        });
+      // Standard HTML form submit — FormSubmit sends email and redirects to _next (?sent=1)
+      form.submit();
     });
   }
 
