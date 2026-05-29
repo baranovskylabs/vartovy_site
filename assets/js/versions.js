@@ -30,6 +30,13 @@
     return node;
   }
 
+  var KIND_ICON = {
+    portable: '💼',
+    installer: '📦',
+    appimage: '🐧',
+    dmg: '🍎',
+  };
+
   function shortHash(h) {
     if (!h || h.length < 16) return h || '';
     return h.slice(0, 8).toUpperCase() + '…' + h.slice(-8).toUpperCase();
@@ -79,7 +86,10 @@
 
         return el('div', { class: 'file-row' }, [
           el('div', { class: 'file-info' }, [
-            el('div', { class: 'file-label', text: f.label || f.filename }),
+            el('div', { class: 'file-label' }, [
+              f.kind && KIND_ICON[f.kind] ? el('span', { class: 'file-kind-icon', text: KIND_ICON[f.kind] + ' ' }) : null,
+              document.createTextNode(f.label || f.filename),
+            ]),
             el('div', { class: 'file-meta dim' }, [
               el('span', { text: (f.os || '') + (f.arch ? ' · ' + f.arch : '') }),
               el('span', { class: 'dot-sep', text: '·' }),
