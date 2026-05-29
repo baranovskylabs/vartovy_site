@@ -129,10 +129,10 @@
       el('p', null, [
         el('a', {
           class: 'btn btn--primary',
-          href: '../downloads/Vartovy-1.0.0-x64-Portable.exe',
-          download: 'Vartovy-1.0.0-x64-Portable.exe',
+          href: 'https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe',
+          download: 'Vartovy-1.0.1-x64-Portable.exe',
           rel: 'noopener',
-          text: '⬇ Vartovy 1.0.0 Portable (95.3 MB)',
+          text: '⬇ Vartovy 1.0.1 Portable (87.3 MB)',
         }),
       ]),
       err && err.message ? el('p', { class: 'dim', text: 'Деталі: ' + err.message }) : null,

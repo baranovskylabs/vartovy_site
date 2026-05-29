@@ -13,7 +13,7 @@
 /download    /pages/download.html    301
 /versions    /pages/versions.html    301
 /releases    /pages/versions.html    301
-/latest      /downloads/Vartovy-1.0.0-x64-Portable.exe   302
+/latest      https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe   302
 /about       /pages/about.html       301
 /contact     /pages/contact.html     301
 /privacy     /pages/privacy.html     301

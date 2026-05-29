@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Завантажити Vartovy 1.0.0 — Windows x64</title>
-  <meta name="description" content="Завантажте Vartovy для Windows 10/11. Portable-збірка, AES-256-GCM шифрування, повна офлайн-робота. Перевірений SHA-256." />
+  <title>Завантажити Vartovy 1.0.1 — Windows x64</title>
+  <meta name="description" content="Завантажте Vartovy 1.0.1 для Windows 10/11. Portable або Setup, AES-256-GCM, повна офлайн-робота. Перевірений SHA-256." />
   <link rel="icon" href="../assets/img/favicon.ico" />
   <link rel="stylesheet" href="../assets/css/styles.css?v=13" />
   <meta name="google" content="notranslate" />
   <link rel="canonical" href="https://vartovy.app/pages/download.html" />
   <meta property="og:url" content="https://vartovy.app/pages/download.html" />
   <meta property="og:site_name" content="Vartovy" />
-  <meta property="og:title" content="Завантажити Vartovy 1.0.0" />
-  <meta property="og:description" content="Portable-збірка для Windows 10/11. AES-256-GCM, Argon2id, офлайн." />
+  <meta property="og:title" content="Завантажити Vartovy 1.0.1" />
+  <meta property="og:description" content="Portable або Setup для Windows 10/11. AES-256-GCM, Argon2id, офлайн." />
   <meta property="og:image" content="https://vartovy.app/assets/img/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#0b0e14" />
@@ -42,18 +42,26 @@
     <div class="container hero-grid">
       <div>
         <span class="eyebrow">Download · Windows 10/11 · x64</span>
-        <h1>Vartovy <span class="accent">1.0.0</span> для Windows</h1>
+        <h1>Vartovy <span class="accent">1.0.1</span> для Windows</h1>
         <p class="lead">
-          Portable-збірка — завантажте, запустіть, працюйте. Без інсталяції, без хмари,
-          без фонових служб. Усі дані залишаються на вашому пристрої.
+          Оберіть зручний варіант: <strong>Portable</strong> — запуск без інсталяції,
+          або <strong>Setup</strong> — класичний інсталятор з ярликом у меню Пуск.
+          Без хмари, без фонових служб. Усі дані залишаються на вашому пристрої.
         </p>
         <div class="hero-cta" id="download-latest">
           <a class="btn btn--primary btn--lg"
-             href="https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.0/Vartovy-1.0.0-x64-Portable.exe"
+             href="https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe"
              download
-             data-track="download-latest"
+             data-track="download-latest-portable"
              rel="noopener">
-            ⬇ Завантажити Vartovy 1.0.0 (95.3 MB)
+            ⬇ Portable (87.3 MB)
+          </a>
+          <a class="btn btn--ghost btn--lg"
+             href="https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Setup.exe"
+             download
+             data-track="download-latest-setup"
+             rel="noopener">
+            ⬇ Setup-інсталятор (95.3 MB)
           </a>
           <a class="btn btn--ghost btn--lg" href="versions.html">Усі версії →</a>
         </div>
@@ -66,25 +74,63 @@
 
       <aside class="vault-card" aria-label="Деталі останньої збірки">
         <div class="vault-card-head">
-          <div class="title">Vartovy 1.0.0 · Portable</div>
+          <div class="title">Vartovy 1.0.1 · Portable + Setup</div>
           <span class="badge">Stable</span>
         </div>
         <ul class="kv-list">
-          <li><span>Версія</span><strong>1.0.0</strong></li>
+          <li><span>Версія</span><strong>1.0.1</strong></li>
           <li><span>Платформа</span><strong>Windows 10/11 (x64)</strong></li>
-          <li><span>Тип</span><strong>Portable .exe</strong></li>
-          <li><span>Розмір</span><strong>95.3 MB</strong></li>
-          <li><span>Дата</span><strong>2026-05-06</strong></li>
+          <li><span>Тип</span><strong>Portable + Setup .exe</strong></li>
+          <li><span>Дата</span><strong>2026-05-29</strong></li>
           <li>
-            <span>SHA-256</span>
-            <code class="hash" title="1E699FC5F88248779DAEB99D36EFF28BE6BE7D42F3E8CD59B4215C782F115E4D">1E699FC5…F115E4D</code>
+            <span>Portable · 87.3 MB</span>
+            <code class="hash" title="9E4BB89E5AC1E9B962AFCE00CC536B9E151C5A1CC325D9B83F74C80C024A00DE">9E4BB89E…C024A00DE</code>
+          </li>
+          <li>
+            <span>Setup · 95.3 MB</span>
+            <code class="hash" title="0D74BFB228984050C5220AAB0C8B9F4F34521AC0973BBD1D15CE7852B135E47C">0D74BFB2…B135E47C</code>
           </li>
         </ul>
         <p class="dim mt-2" style="margin-bottom:0;font-size:.85rem">
-          Перевірте хеш у PowerShell:
-          <code>Get-FileHash .\Vartovy-1.0.0-x64-Portable.exe -Algorithm SHA256</code>
+          Перевірте хеш у PowerShell:<br>
+          <code>Get-FileHash .\Vartovy-1.0.1-x64-Portable.exe -Algorithm SHA256</code>
         </p>
       </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Реліз 1.0.1 · 2026-05-29</span>
+        <h2>Що нового у цій версії</h2>
+        <p>Локалізація довідки восьми мовами і новий формат установлення поряд з Portable.</p>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="card">
+          <div class="icon">🎓</div>
+          <h3>Інтерактивний гід «Навчання» — 8 мов</h3>
+          <p>Кнопка <strong>● Довідка</strong> у застосунку відкриває повний покроковий гід: як створити профіль, додавати записи через шаблони (логін, банківська картка, SSH-ключ тощо), користуватися Workspace, налаштувати резервні копії та аварійне відновлення.</p>
+          <p class="dim mt-2">Доступні мови: українська, English, Deutsch, Français, Español, Italiano, Português, Polski.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📦</div>
+          <h3>Setup-інсталятор поряд із Portable</h3>
+          <p>Тепер можна встановити Vartovy класично — з ярликом у меню «Пуск» і робочим столом — або, як і раніше, запустити Portable-збірку без інсталяції з будь-якої теки чи USB-носія.</p>
+          <p class="dim mt-2">Обидва варіанти містять однаковий застосунок і працюють повністю офлайн.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🛡️</div>
+          <h3>Безпека без змін</h3>
+          <p>AES-256-GCM (VENC-v3), Argon2id для майстер-пароля, HMAC-ланцюг аудит-журналу, Device Key Wrap, CSP <code>connect-src 'none'</code>. Жодних мережевих запитів з renderer-процесу.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📜</div>
+          <h3>Повний журнал змін</h3>
+          <p>Перелік усіх змін від 1.0.0 до 1.0.1 та архів попередніх збірок із SHA-256 хешами — на сторінці <a href="versions.html">Усі версії</a>.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -142,15 +188,15 @@
         <div class="step">
           <div class="step-num">1</div>
           <div>
-            <h3>Завантажте Portable .exe</h3>
-            <p>Кнопка вище збереже файл <code>Vartovy-1.0.0-x64-Portable.exe</code> у вашу теку «Завантаження».</p>
+            <h3>Завантажте Portable або Setup</h3>
+            <p>Кнопки вище збережуть файл <code>Vartovy-1.0.1-x64-Portable.exe</code> або <code>Vartovy-1.0.1-x64-Setup.exe</code> у вашу теку «Завантаження».</p>
           </div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
           <div>
             <h3>Перевірте SHA-256 (рекомендовано)</h3>
-            <p>У PowerShell виконайте <code>Get-FileHash .\Vartovy-1.0.0-x64-Portable.exe -Algorithm SHA256</code> та звірте з хешем у блоці праворуч.</p>
+            <p>У PowerShell виконайте <code>Get-FileHash .\Vartovy-1.0.1-x64-Portable.exe -Algorithm SHA256</code> та звірте з хешем у блоці праворуч.</p>
           </div>
         </div>
         <div class="step">
@@ -177,7 +223,7 @@
         <div class="card">
           <div class="icon">⚠️</div>
           <h3>Якщо Windows показує SmartScreen</h3>
-          <p>Vartovy 1.0.0 поки що підписаний самопідписаним сертифікатом — Microsoft Defender SmartScreen може попередити «Невідомий видавець». Це нормальна поведінка для нових застосунків. Натисніть <strong>Докладніше → Виконати в будь-якому разі</strong>. У майбутніх збірках буде EV-підпис.</p>
+          <p>Vartovy 1.0.1 поки що підписаний самопідписаним сертифікатом — Microsoft Defender SmartScreen може попередити «Невідомий видавець». Це нормальна поведінка для нових застосунків. Натисніть <strong>Докладніше → Виконати в будь-якому разі</strong>. У майбутніх збірках буде EV-підпис.</p>
         </div>
         <div class="card">
           <div class="icon">🔍</div>

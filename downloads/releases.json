@@ -2,11 +2,49 @@
   "$schema": "./releases.schema.json",
   "product": "Vartovy",
   "platform": "windows",
-  "latest": "1.0.0",
+  "latest": "1.0.1",
   "channels": {
-    "stable": "1.0.0"
+    "stable": "1.0.1"
   },
   "releases": [
+    {
+      "version": "1.0.1",
+      "channel": "stable",
+      "date": "2026-05-29",
+      "title": "Vartovy 1.0.1 — Повноцінна локалізація довідки + Setup-інсталятор",
+      "summary": "Інтерактивний гід «Навчання» тепер доступний усіма 8 мовами інтерфейсу. Додано класичний Setup-інсталятор поряд із Portable-збіркою.",
+      "highlights": [
+        "Модуль «Навчання» (кнопка ● Довідка) — повний покроковий гід для нових користувачів",
+        "8 мов довідки: українська, English, Deutsch, Français, Español, Italiano, Português, Polski",
+        "Покрокові інструкції: профілі, шаблони записів, Workspace, резервні копії, поради з безпеки",
+        "Новий варіант установлення: класичний Setup-інсталятор (.exe з NSIS)",
+        "Portable-версія залишається доступною — для запуску без інсталяції"
+      ],
+      "files": [
+        {
+          "kind": "portable",
+          "label": "Portable (x64) — без інсталяції",
+          "filename": "Vartovy-1.0.1-x64-Portable.exe",
+          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe",
+          "size": 91497682,
+          "sizeHuman": "87.3 MB",
+          "arch": "x64",
+          "os": "Windows 10/11",
+          "sha256": "9E4BB89E5AC1E9B962AFCE00CC536B9E151C5A1CC325D9B83F74C80C024A00DE"
+        },
+        {
+          "kind": "installer",
+          "label": "Setup (x64) — класичний інсталятор",
+          "filename": "Vartovy-1.0.1-x64-Setup.exe",
+          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Setup.exe",
+          "size": 99963819,
+          "sizeHuman": "95.3 MB",
+          "arch": "x64",
+          "os": "Windows 10/11",
+          "sha256": "0D74BFB228984050C5220AAB0C8B9F4F34521AC0973BBD1D15CE7852B135E47C"
+        }
+      ]
+    },
     {
       "version": "1.0.0",
       "channel": "stable",
