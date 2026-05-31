@@ -584,6 +584,56 @@ font[style*="background-color"] { background: transparent !important; box-shadow
 }
 .form-field textarea { resize: vertical; min-height: 120px; font-family: var(--font-sans); }
 
+/* Custom select arrow — shifted ~14px left of right edge for better optics */
+.form-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5L6 6.5L11 1.5' stroke='%2300d690' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+.form-field select::-ms-expand { display: none; }
+
+/* Click-to-copy email link */
+.copy-email-link {
+  position: relative;
+  cursor: copy;
+  border-bottom: 1px dashed currentColor;
+  transition: color .15s ease;
+}
+.copy-email-link:hover { color: var(--brand); }
+.copy-email-link.is-copied { color: var(--brand); }
+
+/* Toast notification (top-right) */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: var(--bg-elev, #1a1f2a);
+  color: var(--text, #fff);
+  border: 1px solid var(--brand);
+  border-left: 4px solid var(--brand);
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: .92rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (max-width: 640px) {
+  .toast { left: 20px; right: 20px; text-align: center; }
+}
+
 /* Character counter */
 .char-counter { font-size: .8rem; color: var(--text-dim); text-align: right; margin-top: 3px; }
 .char-counter.is-warn { color: var(--warning); }

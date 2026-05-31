@@ -228,12 +228,42 @@
       showStatus('form.sending', null);
       if (submit) submit.disabled = true;
 
-      // Disable tracking field so it doesn't appear as clutter in the email
-      var openedAtField = form.querySelector('#formOpenedAt');
-      if (openedAtField) openedAtField.disabled = true;
+      // Build JSON payload from form fields
+      var fd = new FormData(form);
+      var payload = {};
+      fd.forEach(function (value, key) {
+        if (key === '_form_opened_at') return;
+        payload[key] = value;
+      });
+      payload.consent = consentEl && consentEl.checked ? 'true' : 'false';
 
-      // Standard HTML form submit — FormSubmit sends email and redirects to _next (?sent=1)
-      form.submit();
+      var endpoint = form.getAttribute('action') || '/api/contact';
+
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload),
+      }).then(function (res) {
+        return res.json().then(function (body) { return { ok: res.ok, body: body }; })
+          ['catch'](function () { return { ok: res.ok, body: {} }; });
+      }).then(function (r) {
+        var success = r.ok && (r.body.success === 'true' || r.body.success === true);
+        if (success) {
+          recordSubmission();
+          showStatus('form.success', 'success', { sticky: true });
+          form.reset();
+          var counter = document.getElementById('charCounter');
+          if (counter) counter.textContent = '0 / 4000';
+          showToast(tr('form.success'));
+          refreshRateState();
+        } else {
+          showStatus('form.error', 'error');
+          if (submit) submit.disabled = false;
+        }
+      })['catch'](function () {
+        showStatus('form.network', 'error');
+        if (submit) submit.disabled = false;
+      });
     });
   }
 
@@ -255,23 +285,35 @@
 
   // --- Copy email button ---
   function initCopyEmail() {
-    var btn = document.getElementById('copyEmailBtn');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      var email = btn.getAttribute('data-copy') || '';
-      var labelCopied = btn.getAttribute('data-label-copied') || 'Copied!';
-      var labelCopy   = btn.getAttribute('data-label-copy')   || 'Copy';
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(email).then(function () {
-          btn.textContent = labelCopied;
-          btn.classList.add('copied');
-          setTimeout(function () {
-            btn.textContent = labelCopy;
-            btn.classList.remove('copied');
-          }, 2000);
-        })['catch'](function () {});
-      }
+    var link = document.getElementById('copyEmailLink');
+    if (!link) return;
+    link.addEventListener('click', function (e) {
+      // Try to copy; only suppress mailto if copy is available
+      if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+      e.preventDefault();
+      var email = link.getAttribute('data-copy') || link.textContent.trim();
+      navigator.clipboard.writeText(email).then(function () {
+        link.classList.add('is-copied');
+        showToast(tr('contact.emailCopied') || 'Email скопійовано: ' + email);
+        setTimeout(function () { link.classList.remove('is-copied'); }, 1600);
+      })['catch'](function () {
+        // Fallback: open mail client
+        window.location.href = 'mailto:' + email;
+      });
     });
+  }
+
+  // --- Toast helper ---
+  var toastTimer = null;
+  function showToast(message, duration) {
+    var el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      el.classList.remove('is-visible');
+    }, duration || 2200);
   }
 
   function _unusedVoiceInput() {

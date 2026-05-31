@@ -1,9 +1,32 @@
 # Vartovy Pro — система ліцензування
 
-Бекенд для видачі та перевірки Pro-ліцензій. Стек:
+> ⚠️ **Важливо для розробників з України.**
+> **Lemon Squeezy і Stripe офіційно недоступні** для українських резидентів/ФОП —
+> їх не можна зареєструвати як Merchant of Record. Архітектура нижче описана
+> для Lemon Squeezy, але інтерфейс ліцензування абстрактний: замініть
+> *провайдера платежів* на один із доступних в Україні варіантів.
+>
+> **Рекомендовані альтернативи (працюють для UA):**
+> | Провайдер   | Тип                    | Виплати                 | Коментар |
+> |-------------|------------------------|-------------------------|----------|
+> | **Paddle**  | Merchant of Record     | SWIFT на валютний рахунок | Найкращий для ФОП 3 групи (КВЕД 62.01). Має License API. |
+> | **Gumroad** | Marketplace            | Payoneer / SWIFT (~10 %) | Найшвидший старт; ключі через webhook `sale`. |
+> | **Polar.sh**| Merchant of Record     | SWIFT / Stripe Connect  | Open-source friendly, є license keys у beta. |
+> | **FastSpring** | Merchant of Record  | SWIFT                   | Корпоративний рівень, складніше підключити. |
+>
+> Решта документу залишається валідною як **референс-архітектура**: webhook
+> → Supabase → видача Ed25519 offline-token. Замініть лише назви секретів
+> (`PADDLE_*` / `GUMROAD_*`) та URL вебхуків.
 
-- **Lemon Squeezy** → платежі + автоматична генерація і відправка ключа покупцю
-  (вбудована фіча *License Keys*).
+---
+
+## Стек
+
+Бекенд для видачі та перевірки Pro-ліцензій:
+
+- **Платіжний провайдер** (Paddle / Gumroad / Polar — обирається під ринок)
+  → платежі + автоматична генерація і відправка ключа покупцю.
+  *У прикладах нижче згадується Lemon Squeezy як технічний референс.*
 - **Supabase Postgres** → дзеркало замовлень/ліцензій, облік активацій.
 - **Supabase Edge Functions (Deno)** → вебхук Lemon Squeezy + ендпоінти
   активації/перевірки/деактивації.
@@ -42,7 +65,30 @@
 
 ## Налаштування
 
-### 1. Lemon Squeezy
+### 1. Платіжний провайдер (виберіть один)
+
+> Для UA-розробника: **Paddle** або **Gumroad**. Lemon Squeezy потребує
+> резидентства США / ЄС-юрособи — інакше акаунт буде заблоковано на KYC.
+
+#### Варіант A. Paddle (рекомендовано для ФОП)
+
+1. Зареєструй продавця → пройди верифікацію (паспорт + IBAN валютного рахунку).
+2. Створи Product → Price → увімкни **License Keys** (Paddle Billing → Entitlements).
+3. **Developer tools → Notifications** → додай endpoint:
+   - URL: `https://<твій-проект>.supabase.co/functions/v1/lemon-webhook`
+     (перейменуй на `paddle-webhook`, якщо хочеш).
+   - Події: `transaction.completed`, `transaction.refunded`,
+     `subscription.canceled`.
+   - Secret key → збережи як `PADDLE_NOTIFICATION_SECRET`.
+4. **Developer tools → Authentication** → API key → `PADDLE_API_KEY`.
+
+#### Варіант B. Gumroad
+
+1. Створи продукт → ✅ *Generate unique license key per sale*.
+2. **Settings → Advanced → Ping** → URL вебхуку (POST на `/lemon-webhook`).
+3. **Settings → Advanced → Applications** → створи access token → `GUMROAD_ACCESS_TOKEN`.
+
+#### Варіант C (референс). Lemon Squeezy — **тільки якщо є US/EU юрособа**
 
 1. Створи Store → Product (тип **Single Payment**).
 2. У продукті → вкладка **License Keys** → ✅ *Generate license keys*.
@@ -73,7 +119,7 @@ supabase db push
 deno run --allow-write server/scripts/generate-signing-keys.ts
 # → скопіюй private_key_b64url у секрети, public_key_b64url зашив у десктоп
 
-# 4. Задати секрети
+# 4. Задати секрети (приклад для Lemon Squeezy; для Paddle/Gumroad заміни ключі)
 supabase secrets set \
   LEMONSQUEEZY_API_KEY=... \
   LEMONSQUEEZY_WEBHOOK_SECRET=... \

@@ -52,6 +52,7 @@
       'form.tooFast':       'Please fill out the form more carefully.',
       'form.rateLimit':     'Limit: 2 messages per day. Try again in ~{h}h.',
       'form.rateExhausted': 'Limit reached. Try again in ~{h}h.',
+      'contact.emailCopied':'Email copied to clipboard',
     },
     uk: {
       'theme.toLight':      'Світла',
@@ -65,6 +66,7 @@
       'form.tooFast':       'Будь ласка, заповніть форму уважніше.',
       'form.rateLimit':     'Ліміт 2 повідомлень на день. Спробуйте через ~{h} год.',
       'form.rateExhausted': 'Ліміт вичерпано. Спробуйте через ~{h} год.',
+      'contact.emailCopied':'Email скопійовано в буфер обміну',
     },
   };
 

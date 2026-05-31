@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0e14" />
   <link rel="canonical" href="https://vartovy.app/pages/contact.html" />
   <link rel="icon" href="../assets/img/favicon.ico" />
-  <link rel="stylesheet" href="../assets/css/styles.css?v=13" />
+  <link rel="stylesheet" href="../assets/css/styles.css?v=14" />
   <meta name="google" content="notranslate" />
   <meta property="og:title" content="Контакти — Vartovy" />
   <meta property="og:description" content="Підтримка, питання, баги, ідеї — пишіть напряму творцю проєкту." />
@@ -56,12 +56,11 @@
         <div class="card">
           <h3>📧 Email</h3>
           <p style="font-size:1.05rem;">
-            <span class="copy-email-wrap">
-              <a href="mailto:support@vartovy.app">support@vartovy.app</a>
-              <button type="button" class="copy-email-btn" id="copyEmailBtn"
-                data-copy="support@vartovy.app"
-                data-label-copy="Копіювати" data-label-copied="Скопійовано!">Копіювати</button>
-            </span>
+            <a href="mailto:support@vartovy.app"
+               class="copy-email-link"
+               id="copyEmailLink"
+               data-copy="support@vartovy.app"
+               title="Натисніть, щоб скопіювати">support@vartovy.app</a>
           </p>
           <p class="dim">Відповідаємо протягом 1–2 робочих днів. Для Pro-користувачів — пріоритетна черга.</p>
 
@@ -79,7 +78,7 @@
         <form
           class="contact-form"
           id="contactForm"
-          action="https://formsubmit.co/support@vartovy.app"
+          action="/api/contact"
           method="POST"
           novalidate
         >
@@ -88,7 +87,6 @@
           <input type="hidden" name="_captcha" value="false" />
           <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp-field" aria-hidden="true" />
           <input type="hidden" name="_form_opened_at" id="formOpenedAt" value="" />
-          <input type="hidden" name="_next" value="https://vartovy.app/pages/contact.html?sent=1" />
 
           <div class="form-row">
             <label class="form-field">
@@ -203,7 +201,9 @@
   </div>
 </footer>
 
-<script src="../assets/js/i18n.js?v=13"></script>
-<script src="../assets/js/main.js?v=13"></script>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="../assets/js/i18n.js?v=14"></script>
+<script src="../assets/js/main.js?v=14"></script>
 </body>
 </html>
