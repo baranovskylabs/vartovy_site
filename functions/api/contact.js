@@ -81,7 +81,7 @@ export async function onRequestPost({ request, env }) {
     // ── Send via Resend ──────────────────────────────────────────────────────
     const apiKey   = env.RESEND_API_KEY;
     const toEmail  = env.TO_EMAIL   || 'support@vartovy.app';
-    const fromEmail = env.FROM_EMAIL || 'onboarding@resend.dev';
+    const fromEmail = env.FROM_EMAIL || 'Vartovy <noreply@vartovy.app>';
 
     if (!apiKey) {
         return json({ success: 'false', message: 'Email service not configured.' }, 500, origin);
