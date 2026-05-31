@@ -81,7 +81,7 @@ export async function onRequestPost({ request, env }) {
     // ── Send via Resend ──────────────────────────────────────────────────────
     const apiKey   = env.RESEND_API_KEY;
     const toEmail  = env.TO_EMAIL   || 'vartovy.support@protonmail.com';
-    const fromEmail = env.FROM_EMAIL || 'Vartovy Contact <noreply@vartovy.app>';
+    const fromEmail = env.FROM_EMAIL || 'onboarding@resend.dev';
 
     if (!apiKey) {
         return json({ success: 'false', message: 'Email service not configured.' }, 500, origin);
@@ -122,7 +122,7 @@ export async function onRequestPost({ request, env }) {
 
     if (!res.ok) {
         const errBody = await res.text().catch(() => '');
-        return json({ success: 'false', message: 'Email delivery failed.' }, 502, origin);
+        return json({ success: 'false', message: 'Email delivery failed: ' + errBody }, 502, origin);
     }
 
     return json({ success: 'true' }, 200, origin);
