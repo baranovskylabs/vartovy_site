@@ -916,9 +916,17 @@ font[style*="background-color"] { background: transparent !important; box-shadow
 }
 .plan-features li strong { color: var(--text); font-weight: 600; }
 
+.upgrade-note {
+  margin: 14px 0;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--brand) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 40%, transparent);
+  border-radius: 10px;
+  font-size: .88rem;
+  color: var(--text);
+  text-align: center;
+}
 .plan-guarantees {
-  list-style: none;
-  padding: 14px 16px;
   margin: 0 0 18px;
   background: var(--bg);
   border: 1px dashed var(--border-strong);
