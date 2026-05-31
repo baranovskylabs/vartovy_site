@@ -237,7 +237,7 @@
       });
       payload.consent = consentEl && consentEl.checked ? 'true' : 'false';
 
-      var endpoint = form.getAttribute('action') || '/api/contact';
+      var endpoint = '/api/contact';
 
       fetch(endpoint, {
         method: 'POST',
