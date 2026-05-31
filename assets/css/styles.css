@@ -694,13 +694,16 @@ font[style*="background-color"] { background: transparent !important; box-shadow
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
-  .grid--3, .grid--4, .plans { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid--3, .grid--4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .plans { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .section { padding: 64px 0; }
   .hero { padding: 70px 0 50px; }
-  .grid--2, .grid--3, .grid--4, .plans { grid-template-columns: 1fr; }
+  .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .nav-links {
     position: absolute; top: 64px; left: 0; right: 0;
