@@ -1,25 +1,27 @@
 /**
  * Cloudflare Pages Function — /api/contact
  *
- * Rate-limits contact form submissions by IP (3 per 24 h).
- * Validates that consent was given.
- * Forwards the payload to FormSubmit AJAX and relays the response.
+ * Rate-limits by IP via KV (3 per 24 h).
+ * Sends email via Resend API.
  *
- * Requires KV namespace "CONTACT_RATE" bound in Pages → Settings → Functions.
+ * Env vars required (Cloudflare Pages → Settings → Environment variables):
+ *   RESEND_API_KEY  — API key from resend.com (re_...)
+ *   TO_EMAIL        — куди надходять листи, напр. support@vartovy.app
+ *   FROM_EMAIL      — верифікований відправник, напр. noreply@vartovy.app
+ *                     (або onboarding@resend.dev для тестів без верифікації домену)
+ *
+ * Optional KV namespace "CONTACT_RATE" for IP rate limiting.
  */
 
-const RATE_LIMIT = 3;
-const RATE_WINDOW_S = 24 * 60 * 60; // 24 hours in seconds
-const FORMSUBMIT_URL =
-    'https://formsubmit.co/ajax/1b37017d3189e6ab449a3b8cc2ddcd56';
+const RATE_LIMIT   = 3;
+const RATE_WINDOW_S = 24 * 60 * 60;
 
-const ALLOWED_ORIGIN = 'https://vartovy.app';
+const ALLOWED_ORIGINS = ['https://vartovy.app', 'http://localhost'];
 
 function corsHeaders(origin) {
-    const allowed =
-        origin === ALLOWED_ORIGIN || origin === 'http://localhost' ? origin : ALLOWED_ORIGIN;
+    const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : 'https://vartovy.app';
     return {
-        'Access-Control-Allow-Origin': allowed,
+        'Access-Control-Allow-Origin':  allowed,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
     };
@@ -28,10 +30,7 @@ function corsHeaders(origin) {
 function json(body, status, origin) {
     return new Response(JSON.stringify(body), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders(origin),
-        },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
     });
 }
 
@@ -45,7 +44,7 @@ export async function onRequestOptions({ request }) {
 export async function onRequestPost({ request, env }) {
     const origin = request.headers.get('Origin') || '';
 
-    // ── Parse body ──────────────────────────────────────────────────────────
+    // ── Parse body ───────────────────────────────────────────────────────────
     let payload;
     try {
         payload = await request.json();
@@ -53,84 +52,86 @@ export async function onRequestPost({ request, env }) {
         return json({ success: 'false', message: 'Invalid JSON.' }, 400, origin);
     }
 
-    // ── Consent check ────────────────────────────────────────────────────────
+    // ── Consent ──────────────────────────────────────────────────────────────
     if (!payload.consent || payload.consent === 'false') {
-        return json(
-            { success: 'false', message: 'Consent is required.' },
-            400,
-            origin,
-        );
+        return json({ success: 'false', message: 'Consent is required.' }, 400, origin);
     }
 
     // ── Honeypot ─────────────────────────────────────────────────────────────
     if (payload._honey && payload._honey.trim() !== '') {
-        // Silent reject for bots.
         return json({ success: 'true' }, 200, origin);
     }
 
-    // ── IP-based rate limit via KV ────────────────────────────────────────────
-    const ip =
-        request.headers.get('CF-Connecting-IP') ||
-        request.headers.get('X-Forwarded-For')?.split(',')[0].trim() ||
-        'unknown';
-
-    const kvKey = `contact:${ip}`;
+    // ── IP rate limit via KV ─────────────────────────────────────────────────
+    const ip = request.headers.get('CF-Connecting-IP')
+        || request.headers.get('X-Forwarded-For')?.split(',')[0].trim()
+        || 'unknown';
 
     if (env.CONTACT_RATE) {
+        const kvKey  = `contact:${ip}`;
         const stored = await env.CONTACT_RATE.get(kvKey);
-        const count = stored ? parseInt(stored, 10) : 0;
+        const count  = stored ? parseInt(stored, 10) : 0;
 
         if (count >= RATE_LIMIT) {
-            return json(
-                { success: 'false', message: 'Rate limit exceeded. Try again tomorrow.' },
-                429,
-                origin,
-            );
+            return json({ success: 'false', message: 'Rate limit exceeded. Try again tomorrow.' }, 429, origin);
         }
-
-        // Increment counter; set TTL only on first write so window starts at first submission
-        const newCount = count + 1;
-        await env.CONTACT_RATE.put(kvKey, String(newCount), {
-            expirationTtl: RATE_WINDOW_S,
-        });
+        await env.CONTACT_RATE.put(kvKey, String(count + 1), { expirationTtl: RATE_WINDOW_S });
     }
 
-    // ── Forward to FormSubmit ────────────────────────────────────────────────
-    // Remove internal/honeypot fields before forwarding
-    const { _honey, _form_opened_at, ...forwardPayload } = payload;
+    // ── Send via Resend ──────────────────────────────────────────────────────
+    const apiKey   = env.RESEND_API_KEY;
+    const toEmail  = env.TO_EMAIL   || 'support@vartovy.app';
+    const fromEmail = env.FROM_EMAIL || 'Vartovy Contact <noreply@vartovy.app>';
 
-    let fsRes;
+    if (!apiKey) {
+        return json({ success: 'false', message: 'Email service not configured.' }, 500, origin);
+    }
+
+    const name    = String(payload.name    || '').slice(0, 80);
+    const email   = String(payload.email   || '').slice(0, 120);
+    const topic   = String(payload.topic   || 'No topic').slice(0, 100);
+    const message = String(payload.message || '').slice(0, 4000);
+
+    const htmlBody = `
+<table style="font-family:sans-serif;font-size:15px;border-collapse:collapse;width:100%">
+  <tr><td style="padding:6px 12px;font-weight:bold;width:140px;background:#f5f5f5">Ім'я</td><td style="padding:6px 12px">${escHtml(name)}</td></tr>
+  <tr><td style="padding:6px 12px;font-weight:bold;background:#f5f5f5">Email</td><td style="padding:6px 12px"><a href="mailto:${escHtml(email)}">${escHtml(email)}</a></td></tr>
+  <tr><td style="padding:6px 12px;font-weight:bold;background:#f5f5f5">Тема</td><td style="padding:6px 12px">${escHtml(topic)}</td></tr>
+  <tr><td style="padding:6px 12px;font-weight:bold;background:#f5f5f5;vertical-align:top">Повідомлення</td><td style="padding:6px 12px;white-space:pre-wrap">${escHtml(message)}</td></tr>
+</table>`;
+
+    let res;
     try {
-        fsRes = await fetch(FORMSUBMIT_URL, {
+        res = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type':  'application/json',
             },
-            body: JSON.stringify(forwardPayload),
+            body: JSON.stringify({
+                from:     fromEmail,
+                to:       [toEmail],
+                reply_to: email || undefined,
+                subject:  `[Vartovy] ${topic} — від ${name}`,
+                html:     htmlBody,
+            }),
         });
     } catch {
-        return json(
-            { success: 'false', message: 'Network error forwarding request.' },
-            502,
-            origin,
-        );
+        return json({ success: 'false', message: 'Network error sending email.' }, 502, origin);
     }
 
-    let fsBody;
-    try {
-        fsBody = await fsRes.json();
-    } catch {
-        fsBody = {};
-    }
-
-    if (!fsRes.ok || fsBody.success === 'false' || fsBody.success === false) {
-        return json(
-            { success: 'false', message: fsBody.message || 'FormSubmit error.' },
-            fsRes.status || 502,
-            origin,
-        );
+    if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        return json({ success: 'false', message: 'Email delivery failed.' }, 502, origin);
     }
 
     return json({ success: 'true' }, 200, origin);
+}
+
+function escHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
