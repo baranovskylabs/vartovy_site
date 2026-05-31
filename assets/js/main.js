@@ -257,7 +257,8 @@
           showToast(tr('form.success'));
           refreshRateState();
         } else {
-          showStatus('form.error', 'error');
+          var errKey = (r.body.error === 'rate_limit') ? 'form.rateExhausted' : 'form.error';
+          showStatus(errKey, 'error');
           if (submit) submit.disabled = false;
         }
       })['catch'](function () {
