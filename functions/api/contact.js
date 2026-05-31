@@ -13,7 +13,7 @@
  * Optional KV namespace "CONTACT_RATE" for IP rate limiting.
  */
 
-const RATE_LIMIT   = 3;
+const RATE_LIMIT   = 2;
 const RATE_WINDOW_S = 24 * 60 * 60;
 
 const ALLOWED_ORIGINS = ['https://vartovy.app', 'http://localhost'];
@@ -67,16 +67,16 @@ export async function onRequestPost({ request, env }) {
         || request.headers.get('X-Forwarded-For')?.split(',')[0].trim()
         || 'unknown';
 
-    // Rate limit тимчасово вимкнено для тестування
-    // if (env.CONTACT_RATE) {
-    //     const kvKey  = `contact:${ip}`;
-    //     const stored = await env.CONTACT_RATE.get(kvKey);
-    //     const count  = stored ? parseInt(stored, 10) : 0;
-    //     if (count >= RATE_LIMIT) {
-    //         return json({ success: 'false', error: 'rate_limit' }, 429, origin);
-    //     }
-    //     await env.CONTACT_RATE.put(kvKey, String(count + 1), { expirationTtl: RATE_WINDOW_S });
-    // }
+    if (env.CONTACT_RATE) {
+        const kvKey  = `contact:${ip}`;
+        const stored = await env.CONTACT_RATE.get(kvKey);
+        const count  = stored ? parseInt(stored, 10) : 0;
+
+        if (count >= RATE_LIMIT) {
+            return json({ success: 'false', error: 'rate_limit' }, 429, origin);
+        }
+        await env.CONTACT_RATE.put(kvKey, String(count + 1), { expirationTtl: RATE_WINDOW_S });
+    }
 
     // ── Send via Resend ──────────────────────────────────────────────────────
     const apiKey   = env.RESEND_API_KEY;
