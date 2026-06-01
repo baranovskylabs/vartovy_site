@@ -29,3 +29,5 @@ const out = {
 console.log(JSON.stringify(out, null, 2));
 console.error("\n⚠  Збережи private_key у секрет Supabase: LICENSE_SIGNING_PRIVATE_KEY");
 console.error("⚠  Public_key зашиваємо у десктоп-клієнт. НЕ комітити private_key у git!");
+
+export {};
