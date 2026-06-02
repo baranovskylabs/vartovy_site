@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  let proPricingSnapshot = null;
+
   function tr(key, params) {
     if (window.VartovyI18n && typeof window.VartovyI18n.t === 'function') {
       return window.VartovyI18n.t(key, params);
@@ -37,10 +39,21 @@
     const checkout = e.target.closest('[data-checkout]');
     if (checkout && checkout.getAttribute('aria-disabled') === 'true') {
       e.preventDefault();
+      let extra = '';
+      if (checkout.getAttribute('data-checkout') === 'pro' && proPricingSnapshot) {
+        if (proPricingSnapshot.reached) {
+          extra = '\n\nEarly Bird завершено. Поточна ціна: $49.';
+        } else {
+          extra = '\n\nEarly Bird: купило ' + proPricingSnapshot.sold +
+            ' з ' + proPricingSnapshot.target +
+            ', залишилось ' + proPricingSnapshot.remaining + ' місць по $29.';
+        }
+      }
       alert(
         'Платіжна інтеграція проходить верифікацію.\n\n' +
         'Якщо хочете отримати Pro-ключ за Early Bird ціною $29 одразу після запуску — ' +
-        'напишіть на support@vartovy.app, ми збережемо ваше місце у перших 1000 покупців.'
+        'напишіть на support@vartovy.app, ми збережемо ваше місце у перших 1000 покупців.' +
+        extra
       );
       return;
     }
@@ -79,11 +92,61 @@
     updateThemeButton(currentTheme());
     markActive();
     setYear();
+    initProPricing();
     initContactForm();
     initCharCounter();
     initCopyEmail();
     cleanLegacyParams();
   });
+
+  // --- Pricing: Pro early-bird live counter ---
+  function initProPricing() {
+    const priceNow = document.getElementById('proPriceNow');
+    const buyBtn = document.getElementById('proBuyButton');
+    const ebText = document.getElementById('proEarlyBirdText');
+    const ebLabel = document.getElementById('proEarlyBirdLabel');
+    const oldPrice = document.getElementById('proPriceOld');
+
+    if (!priceNow || !buyBtn || !ebText || !ebLabel) return;
+
+    fetch('/api/pro-pricing', { headers: { Accept: 'application/json' } })
+      .then(function (res) {
+        return res.json().then(function (body) { return { ok: res.ok, body: body }; })
+          ['catch'](function () { return { ok: res.ok, body: {} }; });
+      })
+      .then(function (r) {
+        if (!r.ok || !r.body) return;
+        const sold = Number(r.body.sold || 0);
+        const target = Number(r.body.target || 1000);
+        const remaining = Math.max(0, Number(r.body.remaining || (target - sold)));
+        const currentPrice = Number(r.body.currentPrice || 29);
+        const reached = Boolean(r.body.reached || sold >= target);
+
+        proPricingSnapshot = {
+          sold: sold,
+          target: target,
+          remaining: remaining,
+          currentPrice: currentPrice,
+          reached: reached,
+        };
+
+        priceNow.textContent = '$' + currentPrice;
+        buyBtn.textContent = 'Купити Pro — $' + currentPrice;
+
+        if (reached) {
+          if (oldPrice) oldPrice.style.display = 'none';
+          ebLabel.textContent = 'Рання пташка завершена:';
+          ebText.textContent = 'Пропозиція для перших ' + target + ' покупців закрита. Поточна ціна — $49.';
+        } else {
+          if (oldPrice) oldPrice.style.display = '';
+          ebLabel.textContent = 'Рання пташка:';
+          ebText.textContent = 'Купило ' + sold + ' з ' + target + '. Залишилось ' + remaining + ' місць за $29.';
+        }
+      })
+      ['catch'](function () {
+        // Silent fallback: keep static values from HTML.
+      });
+  }
 
   // --- Contact form ---
   const RATE_KEY = 'vartovy-contact-submissions';

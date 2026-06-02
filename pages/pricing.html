@@ -85,10 +85,14 @@
       <span class="badge">Рекомендовано</span>
       <h3>Pro</h3>
       <div class="label">Одноразова покупка — без підписки, без обмежень за часом</div>
-      <div class="price"><span class="price-old">$49</span> <span class="price-now">$29</span> <small>один раз</small></div>
-      <div class="early-bird">
-        <strong>Early Bird:</strong> $29 для перших 1000 покупців.
-        <span class="eb-countdown" id="ebCountdown"></span>
+      <div class="price">
+        <span class="price-old" id="proPriceOld">$49</span>
+        <span class="price-now" id="proPriceNow" data-pro-price-now>$29</span>
+        <small>один раз</small>
+      </div>
+      <div class="early-bird" id="proEarlyBirdBox">
+        <strong id="proEarlyBirdLabel">Рання пташка:</strong>
+        <span id="proEarlyBirdText">$29 для перших 1000 покупців.</span>
       </div>
 
       <div class="plan-section-title">Усе з Plus, плюс:</div>
@@ -108,7 +112,7 @@
         <li>Якщо ви припините оновлення — застосунок працює довічно</li>
       </ul>
 
-      <a class="btn btn--primary" href="#" data-checkout="pro" aria-disabled="true" title="Платежі активуються після верифікації Paddle">Купити Pro — $29</a>
+      <a class="btn btn--primary" id="proBuyButton" href="#" data-checkout="pro" aria-disabled="true" title="Платежі активуються після верифікації Paddle">Купити Pro — $29</a>
       <p class="dim mt-2" style="text-align:center;margin-bottom:0;">Уже купили? <a href="activate.html">Активувати ключ →</a></p>
     </div>
 
