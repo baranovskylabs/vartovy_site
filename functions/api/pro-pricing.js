@@ -1,7 +1,7 @@
 /**
  * Cloudflare Pages Function — /api/pro-pricing
  *
- * Returns live Pro early-bird status based on licenses count in Supabase:
+ * Returns live Pro early-bird status based on Cloudflare KV counter:
  * - sold
  * - remaining
  * - currentPrice (29 until first 1000 sales, then 49)
@@ -33,11 +33,17 @@ function json(body, status, origin) {
     });
 }
 
-function parseCount(contentRange) {
-    // Example: "0-9/123"
-    if (!contentRange || !contentRange.includes("/")) return 0;
-    const total = Number(contentRange.split("/")[1]);
-    return Number.isFinite(total) ? total : 0;
+async function readSold(env) {
+    // Primary source: KV binding (PRO_PRICING_KV)
+    if (env.PRO_PRICING_KV) {
+        const raw = await env.PRO_PRICING_KV.get("pro:sold");
+        const value = Number(raw ?? 0);
+        return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
+    }
+
+    // Fallback source: plain env number (PRO_SOLD_COUNT)
+    const fallback = Number(env.PRO_SOLD_COUNT ?? 0);
+    return Number.isFinite(fallback) && fallback >= 0 ? Math.floor(fallback) : 0;
 }
 
 export async function onRequestOptions({ request }) {
@@ -49,38 +55,9 @@ export async function onRequestOptions({ request }) {
 
 export async function onRequestGet({ request, env }) {
     const origin = request.headers.get("Origin") || "";
-    const supabaseUrl = env.SUPABASE_URL;
-    const serviceRole = env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !serviceRole) {
-        return json({
-            sold: 0,
-            target: TARGET,
-            remaining: TARGET,
-            currentPrice: EARLY_PRICE,
-            reached: false,
-            source: "fallback",
-        }, 200, origin);
-    }
 
     try {
-        const url = `${supabaseUrl}/rest/v1/licenses?select=id&plan=eq.pro`;
-        const res = await fetch(url, {
-            method: "GET",
-            headers: {
-                apikey: serviceRole,
-                Authorization: `Bearer ${serviceRole}`,
-                Prefer: "count=exact",
-                Range: "0-0",
-            },
-        });
-
-        if (!res.ok) {
-            const body = await res.text().catch(() => "");
-            return json({ error: "supabase_error", details: body.slice(0, 250) }, 502, origin);
-        }
-
-        const sold = parseCount(res.headers.get("content-range"));
+        const sold = await readSold(env);
         const remaining = Math.max(0, TARGET - sold);
         const reached = sold >= TARGET;
 
@@ -90,9 +67,9 @@ export async function onRequestGet({ request, env }) {
             remaining,
             currentPrice: reached ? REGULAR_PRICE : EARLY_PRICE,
             reached,
-            source: "supabase",
+            source: env.PRO_PRICING_KV ? "kv" : "env",
         }, 200, origin);
     } catch (err) {
-        return json({ error: "network_error", details: String(err) }, 502, origin);
+        return json({ error: "counter_read_failed", details: String(err) }, 502, origin);
     }
 }

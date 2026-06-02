@@ -1,0 +1,7 @@
+name = "vartovy-site"
+compatibility_date = "2026-06-02"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "PRO_PRICING_KV"
+id = "636911930bef4d8b987b181583039387"

@@ -1,4 +1,5 @@
-﻿# Node / npm
+﻿.wrangler/
+# Node / npm
 node_modules/
 npm-debug.log*
 
