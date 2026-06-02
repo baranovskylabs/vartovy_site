@@ -1,21 +1,20 @@
 // Edge Function: activate
 // Endpoint: POST /functions/v1/activate
-// Body: { license_key: string, device_id: string, device_name?: string, platform?: string }
+// Body: { activation_key: string, device_id: string, device_name?: string, platform?: string }
 //
 // Логіка:
-//  1. Знаходимо ліцензію за sha256(license_key). Перевіряємо status='active' і термін.
-//  2. Викликаємо Lemon Squeezy /licenses/activate (instance_name = device_id) — він
-//     слідкує за глобальним лімітом активацій.
-//  3. Створюємо/оновлюємо запис у license_activations.
-//  4. Видаємо короткоживучий офлайн-токен (Ed25519, JWT-формат).
+//  1. Знаходимо one-time activation key за sha256(activation_key).
+//  2. Перевіряємо статус ліцензії та ліміт активацій.
+//  3. Споживаємо ключ (status='consumed') — повторно він не працює.
+//  4. Створюємо/оновлюємо запис у license_activations.
+//  5. Видаємо довгоживучий device-token (Ed25519, JWT-формат).
 //
 // Важливо: повний ключ ніколи не залишається у БД у відкритому вигляді.
 
 import { preflight, json } from "../_shared/cors.ts";
 import { adminClient, sha256Hex } from "../_shared/db.ts";
-import { lemonActivate } from "../_shared/lemon.ts";
 import {
-    OFFLINE_TOKEN_TTL_SEC,
+    PERMANENT_DEVICE_TOKEN_TTL_SEC,
     signOfflineToken,
 } from "../_shared/license-token.ts";
 
@@ -29,16 +28,16 @@ Deno.serve(async (req) => {
     }
 
     let body: {
-        license_key?: string;
+        activation_key?: string;
         device_id?: string;
         device_name?: string;
         platform?: string;
     };
     try { body = await req.json(); } catch { return json({ error: "bad_json" }, { status: 400, origin }); }
 
-    const licenseKey = (body.license_key ?? "").trim();
+    const activationKey = (body.activation_key ?? "").trim();
     const deviceId = (body.device_id ?? "").trim();
-    if (!licenseKey || !deviceId) {
+    if (!activationKey || !deviceId) {
         return json({ error: "missing_fields" }, { status: 400, origin });
     }
     if (deviceId.length < 8 || deviceId.length > 128) {
@@ -46,12 +45,29 @@ Deno.serve(async (req) => {
     }
 
     const db = adminClient();
-    const keyHash = await sha256Hex(licenseKey);
+    const keyHash = await sha256Hex(activationKey);
+
+    const { data: actKey, error: keyErr } = await db
+        .from("activation_keys")
+        .select("id, license_id, status")
+        .eq("key_hash", keyHash)
+        .maybeSingle();
+
+    if (keyErr) {
+        console.error("activation_keys", keyErr);
+        return json({ error: "server_error" }, { status: 500, origin });
+    }
+    if (!actKey) {
+        return json({ error: "activation_key_not_found" }, { status: 404, origin });
+    }
+    if (actKey.status !== "new") {
+        return json({ error: "activation_key_consumed" }, { status: 403, origin });
+    }
 
     const { data: lic, error } = await db
         .from("licenses")
         .select("id, ls_license_key_id, customer_email, plan, status, activation_limit, expires_at")
-        .eq("key_hash", keyHash)
+        .eq("id", actKey.license_id)
         .maybeSingle();
 
     if (error) {
@@ -68,7 +84,6 @@ Deno.serve(async (req) => {
         return json({ error: "license_expired" }, { status: 403, origin });
     }
 
-    // Уже активований цей пристрій?
     const { data: existing } = await db
         .from("license_activations")
         .select("id")
@@ -78,7 +93,6 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
     if (!existing) {
-        // Перевірка ліміту локально
         const { count } = await db
             .from("license_activations")
             .select("*", { count: "exact", head: true })
@@ -87,22 +101,35 @@ Deno.serve(async (req) => {
         if ((count ?? 0) >= lic.activation_limit) {
             return json({ error: "activation_limit_reached" }, { status: 403, origin });
         }
+    }
 
-        // Реєструємо у Lemon Squeezy
-        const ls = await lemonActivate(licenseKey, deviceId);
-        if (!ls.ok || !ls.data?.activated) {
-            return json(
-                { error: "lemon_activate_failed", details: ls.data?.error ?? null },
-                { status: 403, origin },
-            );
-        }
+    const { data: consumed, error: consumeErr } = await db
+        .from("activation_keys")
+        .update({
+            status: "consumed",
+            consumed_at: new Date().toISOString(),
+            consumed_device_id: deviceId,
+        })
+        .eq("id", actKey.id)
+        .eq("status", "new")
+        .select("id")
+        .maybeSingle();
 
+    if (consumeErr) {
+        console.error("consume key", consumeErr);
+        return json({ error: "server_error" }, { status: 500, origin });
+    }
+    if (!consumed) {
+        return json({ error: "activation_key_consumed" }, { status: 403, origin });
+    }
+
+    if (!existing) {
         await db.from("license_activations").insert({
-            license_id:   lic.id,
-            device_id:    deviceId,
-            device_name:  body.device_name ?? null,
-            platform:     body.platform ?? null,
-            ip_hash:      await ipHash(req),
+            license_id: lic.id,
+            device_id: deviceId,
+            device_name: body.device_name ?? null,
+            platform: body.platform ?? null,
+            ip_hash: await ipHash(req),
             last_seen_at: new Date().toISOString(),
         });
     } else {
@@ -118,16 +145,17 @@ Deno.serve(async (req) => {
         pln: lic.plan,
         dev: deviceId,
         iat: now,
-        exp: now + OFFLINE_TOKEN_TTL_SEC,
-        sid: String(lic.ls_license_key_id),
+        exp: now + PERMANENT_DEVICE_TOKEN_TTL_SEC,
+        sid: String(lic.ls_license_key_id ?? lic.id),
     });
 
     return json({
         ok: true,
         plan: lic.plan,
         offline_token: token,
-        expires_in: OFFLINE_TOKEN_TTL_SEC,
+        expires_in: PERMANENT_DEVICE_TOKEN_TTL_SEC,
         email: lic.customer_email,
+        key_consumed: true,
     }, { origin });
 });
 

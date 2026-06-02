@@ -15,6 +15,8 @@
 import { preflight, json } from "../_shared/cors.ts";
 import { verifyLemonSignature } from "../_shared/lemon.ts";
 import { adminClient, sha256Hex } from "../_shared/db.ts";
+import { generateActivationKey } from "../_shared/keys.ts";
+import { sendTransactionalEmail } from "../_shared/mailer.ts";
 
 Deno.serve(async (req) => {
     const pre = preflight(req);
@@ -123,12 +125,17 @@ async function handleLicenseCreated(db: ReturnType<typeof adminClient>, p: any) 
         .eq("ls_order_id", orderId)
         .maybeSingle();
 
+    if (!ord?.id) {
+        console.error("order not found for license", orderId, p?.data?.id);
+        return;
+    }
+
     const fullKey: string = a.key;            // повний ключ
     const keyShort = fullKey.slice(-4);
     const keyHash = await sha256Hex(fullKey);
 
-    await db.from("licenses").upsert({
-        order_id:           ord?.id ?? null,
+    const { data: upserted, error: upsertErr } = await db.from("licenses").upsert({
+        order_id:           ord.id,
         ls_license_key_id:  Number(p.data.id),
         key_short:          keyShort,
         key_hash:           keyHash,
@@ -138,7 +145,52 @@ async function handleLicenseCreated(db: ReturnType<typeof adminClient>, p: any) 
         activation_limit:   Number(a.activation_limit ?? 3),
         activations_count:  Number(a.activation_usage ?? 0),
         expires_at:         a.expires_at ?? null,
-    }, { onConflict: "ls_license_key_id" });
+    }, { onConflict: "ls_license_key_id" }).select("id, customer_email").maybeSingle();
+
+    if (upsertErr || !upserted?.id) {
+        console.error("license upsert failed", upsertErr);
+        return;
+    }
+
+    const { data: existingKey } = await db
+        .from("activation_keys")
+        .select("id")
+        .eq("license_id", upserted.id)
+        .eq("status", "new")
+        .maybeSingle();
+
+    if (existingKey?.id) return;
+
+    const plainActivationKey = generateActivationKey();
+    const activationHash = await sha256Hex(plainActivationKey);
+
+    const { error: keyInsertErr } = await db.from("activation_keys").insert({
+        license_id: upserted.id,
+        key_hash: activationHash,
+        key_short: plainActivationKey.slice(-4),
+        status: "new",
+    });
+    if (keyInsertErr) {
+        console.error("activation key insert failed", keyInsertErr);
+        return;
+    }
+
+    const mail = await sendTransactionalEmail({
+        to: upserted.customer_email,
+        subject: "Vartovy: ваш ключ активації",
+        text: [
+            "Дякуємо за покупку Vartovy.",
+            "",
+            "Ваш одноразовий ключ активації:",
+            plainActivationKey,
+            "",
+            "Ключ спрацьовує один раз і прив'язується до вашого пристрою.",
+            "Після перевстановлення ОС використайте відновлення через email.",
+        ].join("\n"),
+    });
+    if (!mail.ok) {
+        console.error("activation mail failed", mail.status, mail.error);
+    }
 }
 
 async function handleLicenseUpdated(db: ReturnType<typeof adminClient>, p: any) {
@@ -160,9 +212,15 @@ async function handleOrderRefunded(db: ReturnType<typeof adminClient>, p: any) {
         .from("orders").select("id").eq("ls_order_id", orderId).maybeSingle();
     if (ord?.id) {
         await db.from("licenses").update({ status: "revoked" }).eq("order_id", ord.id);
-        // також revoke усі активні активації
         const { data: lics } = await db
             .from("licenses").select("id").eq("order_id", ord.id);
+        for (const l of lics ?? []) {
+            await db.from("activation_keys")
+                .update({ status: "revoked" })
+                .eq("license_id", l.id)
+                .eq("status", "new");
+        }
+        // також revoke усі активні активації
         for (const l of lics ?? []) {
             await db.from("license_activations")
                 .update({ revoked_at: new Date().toISOString() })

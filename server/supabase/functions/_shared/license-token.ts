@@ -59,3 +59,7 @@ export async function signOfflineToken(payload: TokenPayload): Promise<string> {
 
 // TTL офлайн-токена. Після завершення клієнт мусить онлайн оновити.
 export const OFFLINE_TOKEN_TTL_SEC = 60 * 60 * 24 * 14; // 14 днів
+
+// Довгоживучий device-license токен для моделі "купив назавжди на цьому пристрої".
+// 20 років достатньо для практичного "forever" без залежності від системного часу.
+export const PERMANENT_DEVICE_TOKEN_TTL_SEC = 60 * 60 * 24 * 365 * 20;
