@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Безпека — Vartovy</title>
-  <meta name="description" content="Модель безпеки Vartovy: AES-256-GCM, Argon2id, Ed25519, zero-knowledge архітектура. Від чого захищаємо і від чого — ні." />
+  <meta name="description" content="Security model Vartovy як локальної security platform: cryptography, policy engine, recovery readiness, audit integrity і чесна модель загроз." />
   <meta name="theme-color" content="#0b0e14" />
   <link rel="canonical" href="https://vartovy.app/pages/security.html" />
   <link rel="icon" href="../assets/img/favicon.ico" />
@@ -43,8 +43,23 @@
   <section class="hero">
     <div class="container text-center">
       <span class="eyebrow">Security</span>
-      <h1>Безпека на <span style="color:var(--brand)">перевіреній криптографії</span></h1>
-      <p class="lead" style="margin:0 auto;">Жодних власних алгоритмів. Жодних хмарних ключів. Тільки стандарти, що пройшли незалежний аудит — і чесна модель загроз.</p>
+      <h1>Безпека платформи на <span style="color:var(--brand)">перевіреній криптографії</span></h1>
+      <p class="lead" style="margin:0 auto;">Vartovy поєднує криптографію, policy-driven контроль доступу, recovery readiness і tamper-evident аудит у єдиній локальній security platform.</p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Платформні security-контракти</h2>
+        <p class="dim">Безпека задається не окремими фічами, а жорсткими контрактами між модулями.</p>
+      </div>
+      <div class="grid grid--2">
+        <div class="card"><h3>Security Core -> Storage</h3><p>Розблокування і ключовий контур завжди передують доступу до зашифрованих даних.</p></div>
+        <div class="card"><h3>Security Core -> Policy Engine</h3><p>Lockout, session timeout та risk decisions проходять через єдину policy-логіку.</p></div>
+        <div class="card"><h3>Recovery -> Audit</h3><p>Аварійні дії супроводжуються подіями аудиту з можливістю перевірки цілісності.</p></div>
+        <div class="card"><h3>Reliability -> Operator actions</h3><p>Панелі надійності та recovery readiness дають конкретні, перевірні і повторювані кроки.</p></div>
+      </div>
     </div>
   </section>
 
@@ -124,7 +139,7 @@
   <section class="section section--alt">
     <div class="container">
       <div class="section-head">
-        <h2>⚖️ Модель загроз — чесно</h2>
+        <h2>⚖️ Модель загроз — чесно і платформно</h2>
         <p class="dim">Ми захищаємо від реальних загроз і відверто кажемо про обмеження.</p>
       </div>
       <div class="grid grid--2">

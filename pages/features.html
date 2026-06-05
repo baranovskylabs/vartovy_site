@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Можливості — Vartovy</title>
-  <meta name="description" content="Повний огляд функцій Vartovy: офлайн-шифрування AES-256-GCM, багаторівневий доступ, відновлення без бекдору, журнал подій та повний контроль над даними." />
+  <meta name="description" content="Vartovy як local security platform: security core, encrypted storage, recovery center, audit chain і policy-driven керування критичними цифровими активами." />
   <meta name="theme-color" content="#0b0e14" />
   <link rel="canonical" href="https://vartovy.app/pages/features.html" />
   <link rel="icon" href="../assets/img/favicon.ico" />
@@ -42,16 +42,33 @@
   <section class="hero">
     <div class="container text-center">
       <span class="eyebrow">Features</span>
-      <h1>Все що робить Vartovy — <span style="color:var(--brand)">детально</span></h1>
-      <p class="lead" style="margin:0 auto;">Локальний сейф без компромісів. Жодних хмар, жодних підписок, жодних прихованих каналів. Нижче — повний огляд кожної функції.</p>
+      <h1>Vartovy як <span style="color:var(--brand)">security platform</span>: детально</h1>
+      <p class="lead" style="margin:0 auto;">Це більше, ніж менеджер паролів: модульна платформа для захисту критичних цифрових активів з офлайн-надійністю і прогнозованими security-сценаріями.</p>
     </div>
   </section>
 
   <section class="section section--alt">
     <div class="container">
       <div class="section-head">
-        <h2>🗄️ Що можна зберігати</h2>
-        <p class="dim">Vartovy — це не лише паролі. Це єдина точка для всіх чутливих даних.</p>
+        <h2>Платформна архітектура</h2>
+        <p class="dim">Кожен модуль вирішує окремий клас ризиків, але працює в єдиному security-контурі.</p>
+      </div>
+      <div class="grid grid--3">
+        <div class="card"><div class="icon">🧠</div><h3>Security Core</h3><p>Staged unlock, policy lockout, сесійні правила і керування доступом на рівні застосунку.</p></div>
+        <div class="card"><div class="icon">🗄️</div><h3>Storage Layer</h3><p>Шифроване локальне сховище, контроль цілісності та режим виділеного знімного носія.</p></div>
+        <div class="card"><div class="icon">🩺</div><h3>Reliability Center</h3><p>Операційні сигнали ризику: слабкі/повторні/прострочені записи, стан бекапів і recovery readiness.</p></div>
+        <div class="card"><div class="icon">🚨</div><h3>Recovery Center</h3><p>Paper kit, recovery-code, checklist і тренування аварійного доступу до інциденту.</p></div>
+        <div class="card"><div class="icon">⛓️</div><h3>Audit Chain</h3><p>Tamper-evident аудит дій з перевіркою ланцюжка цілісності для доказової надійності.</p></div>
+        <div class="card"><div class="icon">📐</div><h3>Policy Engine</h3><p>Єдині правила рішень для модулів без фрагментації логіки і суперечностей у поведінці.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>🗄️ Що можна захищати</h2>
+        <p class="dim">Vartovy покриває ширший клас критичних цифрових активів, а не тільки credentials.</p>
       </div>
       <div class="grid grid--3">
         <div class="card"><div class="icon">🔑</div><h3>Паролі та облікові дані</h3><p>Логін, пароль, URL, нотатка, TOTP-ключ — всі поля в одному записі. Пошук по всьому сейфу миттєвий навіть для тисяч записів.</p></div>
@@ -105,7 +122,7 @@
         <div class="card"><div class="icon">🗝️</div><h3>Recovery-код без бекдору</h3><p>При створенні сейфа генерується recovery-код. У розробника немає резервної копії. Якщо втратите і пароль, і код — дані будуть недоступні. Це не баг — це гарантія вашої приватності.</p></div>
         <div class="card"><div class="icon">💾</div><h3>Зашифрований бекап</h3><p>Експортуйте сейф у зашифрований файл — збережіть на флешку, у холодне сховище. Файл відкривається лише майстер-паролем.</p></div>
         <div class="card"><div class="icon">📤</div><h3>Імпорт і міграція</h3><p>Переїжджаєте з іншого менеджера? Vartovy підтримує імпорт з популярних форматів CSV/JSON. Є і зворотній експорт.</p></div>
-        <div class="card"><div class="icon">📋</div><h3>Журнал подій</h3><p>Локальна стрічка активності: входи, зміни записів, невдалі спроби. Тільки на вашому пристрої.</p></div>
+        <div class="card"><div class="icon">📋</div><h3>Журнал і цілісність подій</h3><p>Локальна стрічка активності з верифікацією audit chain: входи, зміни записів, невдалі спроби, backup/recovery дії.</p></div>
       </div>
     </div>
   </section>
