@@ -13,8 +13,8 @@
 /download    /pages/download.html    301
 /versions    /pages/versions.html    301
 /releases    /pages/versions.html    301
-/latest      https://github.com/baranovskylabs/vartovy_site/releases/tag/v1.0.1   302
-/latest-setup      https://github.com/baranovskylabs/vartovy_site/releases/tag/v1.0.1   302
+/latest      /api/download-portable   302
+/latest-setup      /api/download-setup   302
 /about       /pages/about.html       301
 /contact     /pages/contact.html     301
 /privacy     /pages/privacy.html     301
