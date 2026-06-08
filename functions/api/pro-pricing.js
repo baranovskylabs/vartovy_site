@@ -11,6 +11,21 @@ const TARGET = 1000;
 const EARLY_PRICE = 29;
 const REGULAR_PRICE = 49;
 
+const DOWNLOADS = {
+    setup: {
+        envVar: "DOWNLOAD_SETUP_URL",
+        defaultUrl: "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.2/Vartovy-1.0.2-x64-Setup.exe",
+        filename: "Vartovy-1.0.2-x64-Setup.exe",
+        unavailable: "Файл Setup 1.0.2 ще не опублікований у сховищі. Спробуйте пізніше.",
+    },
+    portable: {
+        envVar: "DOWNLOAD_PORTABLE_URL",
+        defaultUrl: "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.2/Vartovy-1.0.2-x64-Portable.exe",
+        filename: "Vartovy-1.0.2-x64-Portable.exe",
+        unavailable: "Файл Portable 1.0.2 ще не опублікований у сховищі. Спробуйте пізніше.",
+    },
+};
+
 const ALLOWED_ORIGINS = ["https://vartovy.app", "http://localhost", "http://127.0.0.1:5500"];
 
 function corsHeaders(origin) {
@@ -55,6 +70,61 @@ export async function onRequestOptions({ request }) {
 
 export async function onRequestGet({ request, env }) {
     const origin = request.headers.get("Origin") || "";
+    const url = new URL(request.url);
+    const downloadKind = (url.searchParams.get("download") || "").toLowerCase();
+
+    if (downloadKind) {
+        const target = DOWNLOADS[downloadKind];
+        if (!target) {
+            return new Response("Невірний параметр download. Використайте setup або portable.", {
+                status: 400,
+                headers: {
+                    "Content-Type": "text/plain; charset=utf-8",
+                    "Cache-Control": "no-store",
+                },
+            });
+        }
+
+        const sourceUrl = env[target.envVar] || target.defaultUrl;
+
+        try {
+            const upstream = await fetch(sourceUrl, {
+                redirect: "follow",
+                headers: {
+                    "User-Agent": "Vartovy-Site-Download-Proxy/1.0",
+                },
+            });
+
+            if (!upstream.ok || !upstream.body) {
+                return new Response(target.unavailable, {
+                    status: 503,
+                    headers: {
+                        "Content-Type": "text/plain; charset=utf-8",
+                        "Cache-Control": "no-store",
+                    },
+                });
+            }
+
+            const headers = new Headers(upstream.headers);
+            headers.set("Content-Type", "application/octet-stream");
+            headers.set("Content-Disposition", `attachment; filename=\"${target.filename}\"`);
+            headers.set("Cache-Control", "public, max-age=300, must-revalidate");
+            headers.set("X-Content-Type-Options", "nosniff");
+
+            return new Response(upstream.body, {
+                status: 200,
+                headers,
+            });
+        } catch (err) {
+            return new Response(`Помилка сервера завантаження: ${String(err)}`, {
+                status: 502,
+                headers: {
+                    "Content-Type": "text/plain; charset=utf-8",
+                    "Cache-Control": "no-store",
+                },
+            });
+        }
+    }
 
     try {
         const sold = await readSold(env);
