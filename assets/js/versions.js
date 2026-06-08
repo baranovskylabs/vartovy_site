@@ -75,8 +75,10 @@
       );
     }
 
-    var files = el('div', { class: 'release-files' },
-      (rel.files || []).map(function (f) {
+    var filesList = rel.files || [];
+    var files = filesList.length
+      ? el('div', { class: 'release-files' },
+      filesList.map(function (f) {
         var hashRow = f.sha256
           ? el('div', { class: 'file-hash' }, [
               el('span', { class: 'dim', text: 'SHA-256:' }),
@@ -107,7 +109,13 @@
           }),
         ]);
       })
-    );
+      )
+      : el('div', { class: 'release-files' }, [
+          el('p', {
+            class: 'muted',
+            text: 'Файли для цього релізу ще не прикріплені. Дивіться сусідні версії або сторінку Download.',
+          }),
+        ]);
 
     return el('article', { class: 'release-card' + (isLatest ? ' release-card--latest' : '') }, [
       head, summary, highlights, files,
@@ -139,10 +147,10 @@
       el('p', null, [
         el('a', {
           class: 'btn btn--primary',
-          href: 'https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe',
-          download: 'Vartovy-1.0.1-x64-Portable.exe',
+          href: 'https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.2/Vartovy-1.0.2-x64-Portable.exe',
+          download: 'Vartovy-1.0.2-x64-Portable.exe',
           rel: 'noopener',
-          text: '⬇ Vartovy 1.0.1 Portable (87.3 MB)',
+          text: '⬇ Vartovy 1.0.2 Portable (87.3 MB)',
         }),
       ]),
       err && err.message ? el('p', { class: 'dim', text: 'Деталі: ' + err.message }) : null,

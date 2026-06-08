@@ -2,16 +2,16 @@
   "$schema": "./releases.schema.json",
   "product": "Vartovy",
   "platform": "windows",
-  "latest": "1.0.1",
+  "latest": "1.0.2",
   "channels": {
-    "stable": "1.0.1"
+    "stable": "1.0.2"
   },
   "releases": [
     {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "channel": "stable",
       "date": "2026-05-29",
-      "title": "Vartovy 1.0.1 — Повноцінна локалізація довідки + Setup-інсталятор",
+      "title": "Vartovy 1.0.2 — Повноцінна локалізація довідки + Setup-інсталятор",
       "summary": "Інтерактивний гід «Навчання» тепер доступний усіма 8 мовами інтерфейсу. Додано класичний Setup-інсталятор поряд із Portable-збіркою.",
       "highlights": [
         "Модуль «Навчання» (кнопка ● Довідка) — повний покроковий гід для нових користувачів",
@@ -24,8 +24,8 @@
         {
           "kind": "portable",
           "label": "Portable (x64) — без інсталяції",
-          "filename": "Vartovy-1.0.1-x64-Portable.exe",
-          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Portable.exe",
+          "filename": "Vartovy-1.0.2-x64-Portable.exe",
+          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.2/Vartovy-1.0.2-x64-Portable.exe",
           "size": 91497682,
           "sizeHuman": "87.3 MB",
           "arch": "x64",
@@ -35,8 +35,8 @@
         {
           "kind": "installer",
           "label": "Setup (x64) — класичний інсталятор",
-          "filename": "Vartovy-1.0.1-x64-Setup.exe",
-          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.1/Vartovy-1.0.1-x64-Setup.exe",
+          "filename": "Vartovy-1.0.2-x64-Setup.exe",
+          "url": "https://github.com/baranovskylabs/vartovy_site/releases/download/v1.0.2/Vartovy-1.0.2-x64-Setup.exe",
           "size": 99963819,
           "sizeHuman": "95.3 MB",
           "arch": "x64",
@@ -44,6 +44,19 @@
           "sha256": "0D74BFB228984050C5220AAB0C8B9F4F34521AC0973BBD1D15CE7852B135E47C"
         }
       ]
+    },
+    {
+      "version": "1.0.1",
+      "channel": "stable",
+      "date": "2026-05-29",
+      "title": "Vartovy 1.0.1 — Локалізація довідки + Setup-інсталятор",
+      "summary": "Проміжний реліз між 1.0.0 і 1.0.2: оновлений модуль «Навчання» та підтримка Setup-пакування.",
+      "highlights": [
+        "Модуль «Навчання» — покроковий гід для нових користувачів",
+        "Підготовка багатомовної довідки",
+        "Перший реліз Setup-інсталятора поруч із Portable"
+      ],
+      "files": []
     },
     {
       "version": "1.0.0",
