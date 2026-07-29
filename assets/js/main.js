@@ -300,7 +300,8 @@
       });
       payload.consent = consentEl && consentEl.checked ? 'true' : 'false';
 
-      var endpoint = '/api/contact';
+      var isLocalPreview = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      var endpoint = isLocalPreview ? 'https://vartovy.app/api/contact' : '/api/contact';
 
       fetch(endpoint, {
         method: 'POST',

@@ -6,7 +6,6 @@
  *
  * Env vars required (Cloudflare Pages → Settings → Environment variables):
  *   RESEND_API_KEY  — API key from resend.com (re_...)
- *   TO_EMAIL        — куди надходять листи, напр. support@vartovy.app
  *   FROM_EMAIL      — верифікований відправник, напр. noreply@vartovy.app
  *                     (або onboarding@resend.dev для тестів без верифікації домену)
  *
@@ -15,11 +14,15 @@
 
 const RATE_LIMIT   = 2;
 const RATE_WINDOW_S = 24 * 60 * 60;
+const CONTACT_RECIPIENT = 'vartovy.support@protonmail.com';
 
-const ALLOWED_ORIGINS = ['https://vartovy.app', 'http://localhost'];
+const ALLOWED_ORIGINS = ['https://vartovy.app', 'https://www.vartovy.app'];
+const LOCAL_ORIGIN = /^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/;
 
 function corsHeaders(origin) {
-    const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : 'https://vartovy.app';
+    const allowed = ALLOWED_ORIGINS.includes(origin) || LOCAL_ORIGIN.test(origin)
+        ? origin
+        : 'https://vartovy.app';
     return {
         'Access-Control-Allow-Origin':  allowed,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -67,20 +70,19 @@ export async function onRequestPost({ request, env }) {
         || request.headers.get('X-Forwarded-For')?.split(',')[0].trim()
         || 'unknown';
 
+    const kvKey = `contact:${ip}`;
+    let submissionCount = 0;
     if (env.CONTACT_RATE) {
-        const kvKey  = `contact:${ip}`;
         const stored = await env.CONTACT_RATE.get(kvKey);
-        const count  = stored ? parseInt(stored, 10) : 0;
+        submissionCount = stored ? parseInt(stored, 10) : 0;
 
-        if (count >= RATE_LIMIT) {
+        if (submissionCount >= RATE_LIMIT) {
             return json({ success: 'false', error: 'rate_limit' }, 429, origin);
         }
-        await env.CONTACT_RATE.put(kvKey, String(count + 1), { expirationTtl: RATE_WINDOW_S });
     }
 
     // ── Send via Resend ──────────────────────────────────────────────────────
     const apiKey   = env.RESEND_API_KEY;
-    const toEmail  = env.TO_EMAIL   || 'support@vartovy.app';
     const fromEmail = env.FROM_EMAIL || 'Vartovy <noreply@vartovy.app>';
 
     if (!apiKey) {
@@ -110,7 +112,7 @@ export async function onRequestPost({ request, env }) {
             },
             body: JSON.stringify({
                 from:     fromEmail,
-                to:       [toEmail],
+                to:       [CONTACT_RECIPIENT],
                 reply_to: email || undefined,
                 subject:  `[Vartovy] ${topic} — від ${name}`,
                 html:     htmlBody,
@@ -123,6 +125,10 @@ export async function onRequestPost({ request, env }) {
     if (!res.ok) {
         const errBody = await res.text().catch(() => '');
         return json({ success: 'false', message: 'Email delivery failed: ' + errBody }, 502, origin);
+    }
+
+    if (env.CONTACT_RATE) {
+        await env.CONTACT_RATE.put(kvKey, String(submissionCount + 1), { expirationTtl: RATE_WINDOW_S });
     }
 
     return json({ success: 'true' }, 200, origin);
