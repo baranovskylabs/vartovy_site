@@ -266,7 +266,11 @@
           form.reset();
           var counter = document.getElementById('charCounter');
           if (counter) counter.textContent = '0 / 4000';
+          if (submit) submit.disabled = false;
           showToast(tr('form.success'));
+          setTimeout(function () {
+            location.href = '../index.html';
+          }, 2000);
         } else {
           var errKey = (r.body.error === 'rate_limit') ? 'form.rateExhausted' : 'form.error';
           setStatus(status, tr(errKey) + (r.status ? ' (HTTP ' + r.status + ')' : ''), 'error');
