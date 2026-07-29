@@ -50,8 +50,8 @@
       'form.network':       'Network error. Check your connection and try again.',
       'form.honeypot':      'Could not send.',
       'form.tooFast':       'Please fill out the form more carefully.',
-      'form.rateLimit':     'Limit: 2 messages per day. Try again in ~{h}h.',
-      'form.rateExhausted': 'Limit of 2 messages per day reached. Try again tomorrow.',
+      'form.rateLimit':     'Daily message limit reached. Try again tomorrow.',
+      'form.rateExhausted': 'Daily message limit reached. Try again tomorrow.',
       'contact.emailCopied':'Email copied to clipboard',
     },
     uk: {
@@ -64,8 +64,8 @@
       'form.network':       'Помилка мережі. Перевірте з\'єднання та спробуйте ще раз.',
       'form.honeypot':      'Не вдалось надіслати.',
       'form.tooFast':       'Будь ласка, заповніть форму уважніше.',
-      'form.rateLimit':     'Ліміт 2 повідомлень на день. Спробуйте через ~{h} год.',
-      'form.rateExhausted': 'Ліміт 2 повідомлень на день вичерпано. Спробуйте завтра.',
+      'form.rateLimit':     'Денний ліміт повідомлень вичерпано. Спробуйте завтра.',
+      'form.rateExhausted': 'Денний ліміт повідомлень вичерпано. Спробуйте завтра.',
       'contact.emailCopied':'Email скопійовано в буфер обміну',
     },
   };

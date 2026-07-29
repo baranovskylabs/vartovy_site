@@ -149,43 +149,7 @@
   }
 
   // --- Contact form ---
-  const RATE_KEY = 'vartovy-contact-submissions';
-  const RATE_LIMIT = 2;
-  const RATE_WINDOW_MS = 24 * 60 * 60 * 1000;
   const MIN_FILL_TIME_MS = 3000;
-
-  function safeStorage() {
-    try { return window.localStorage; } catch (_) { return null; }
-  }
-
-  function getRecentSubmissions() {
-    const ls = safeStorage();
-    if (!ls) return [];
-    try {
-      const raw = ls.getItem(RATE_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-      const now = Date.now();
-      return arr.filter((t) => typeof t === 'number' && now - t < RATE_WINDOW_MS);
-    } catch (_) {
-      return [];
-    }
-  }
-
-  function recordSubmission() {
-    const ls = safeStorage();
-    if (!ls) return;
-    const list = getRecentSubmissions();
-    list.push(Date.now());
-    try { ls.setItem(RATE_KEY, JSON.stringify(list)); } catch (_) { }
-  }
-
-  function formatHoursLeft(submissions) {
-    const oldest = Math.min.apply(null, submissions);
-    const msLeft = RATE_WINDOW_MS - (Date.now() - oldest);
-    return Math.max(1, Math.ceil(msLeft / (60 * 60 * 1000)));
-  }
 
   function setStatus(el, text, type) {
     if (!el) return;
@@ -211,10 +175,7 @@
 
     function showStatus(key, type, opts) {
       opts = opts || {};
-      const params = key === 'form.rateExhausted' || key === 'form.rateLimit'
-        ? { h: formatHoursLeft(getRecentSubmissions()) }
-        : null;
-      setStatus(status, tr(key, params || undefined), type);
+      setStatus(status, tr(key), type);
       if (opts.sticky) lastStatus = { key: key, type: type };
       else lastStatus = null;
     }
@@ -224,29 +185,14 @@
       setStatus(status, '', null);
     }
 
-    function refreshRateState() {
-      const recent = getRecentSubmissions();
-      if (recent.length >= RATE_LIMIT) {
-        showStatus('form.rateExhausted', 'error', { sticky: true });
-        if (submit) submit.disabled = true;
-      } else if (lastStatus && lastStatus.key === 'form.rateExhausted') {
-        clearStatus();
-        if (submit) submit.disabled = false;
-      } else if (lastStatus) {
-        // Re-render any sticky message in the new language.
-        showStatus(lastStatus.key, lastStatus.type, { sticky: true });
-      }
-    }
-
-    refreshRateState();
-    document.addEventListener('vartovy:langchange', refreshRateState);
+    document.addEventListener('vartovy:langchange', function () {
+      if (lastStatus) showStatus(lastStatus.key, lastStatus.type, { sticky: true });
+    });
 
     // Show success if redirected back from FormSubmit (?sent=1)
     var sentParam = new URLSearchParams(location.search);
     if (sentParam.get('sent') === '1') {
-      recordSubmission();
       showStatus('form.success', 'success', { sticky: true });
-      refreshRateState();
       if (history.replaceState) {
         history.replaceState(null, '', location.pathname + location.hash);
       }
@@ -263,13 +209,6 @@
 
       if (Date.now() - openedAt < MIN_FILL_TIME_MS) {
         showStatus('form.tooFast', 'error');
-        return;
-      }
-
-      const recent = getRecentSubmissions();
-      if (recent.length >= RATE_LIMIT) {
-        showStatus('form.rateLimit', 'error', { sticky: true });
-        if (submit) submit.disabled = true;
         return;
       }
 
@@ -299,30 +238,38 @@
         payload[key] = value;
       });
       payload.consent = consentEl && consentEl.checked ? 'true' : 'false';
+      payload._submission_id = typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-      var isLocalPreview = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-      var endpoint = isLocalPreview ? 'https://vartovy.app/api/contact' : '/api/contact';
+      function send(attempt) {
+        return fetch('https://vartovy.app/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload),
+        }).then(function (res) {
+          return res.json().then(function (body) { return { ok: res.ok, status: res.status, body: body }; })
+            ['catch'](function () { return { ok: res.ok, status: res.status, body: {} }; });
+        }).then(function (result) {
+          if (!result.ok && result.status >= 500 && attempt === 0) return send(1);
+          return result;
+        })['catch'](function (error) {
+          if (attempt === 0) return send(1);
+          throw error;
+        });
+      }
 
-      fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload),
-      }).then(function (res) {
-        return res.json().then(function (body) { return { ok: res.ok, body: body }; })
-          ['catch'](function () { return { ok: res.ok, body: {} }; });
-      }).then(function (r) {
+      send(0).then(function (r) {
         var success = r.ok && (r.body.success === 'true' || r.body.success === true);
         if (success) {
-          recordSubmission();
           showStatus('form.success', 'success', { sticky: true });
           form.reset();
           var counter = document.getElementById('charCounter');
           if (counter) counter.textContent = '0 / 4000';
           showToast(tr('form.success'));
-          refreshRateState();
         } else {
           var errKey = (r.body.error === 'rate_limit') ? 'form.rateExhausted' : 'form.error';
-          showStatus(errKey, 'error');
+          setStatus(status, tr(errKey) + (r.status ? ' (HTTP ' + r.status + ')' : ''), 'error');
           if (submit) submit.disabled = false;
         }
       })['catch'](function () {

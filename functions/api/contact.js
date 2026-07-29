@@ -12,7 +12,7 @@
  * Optional KV namespace "CONTACT_RATE" for IP rate limiting.
  */
 
-const RATE_LIMIT   = 2;
+const RATE_LIMIT   = 20;
 const RATE_WINDOW_S = 24 * 60 * 60;
 const CONTACT_RECIPIENT = 'vartovy.support@protonmail.com';
 
@@ -93,6 +93,9 @@ export async function onRequestPost({ request, env }) {
     const email   = String(payload.email   || '').slice(0, 120);
     const topic   = String(payload.topic   || 'No topic').slice(0, 100);
     const message = String(payload.message || '').slice(0, 4000);
+    const submissionId = String(payload._submission_id || '')
+        .replace(/[^a-zA-Z0-9_-]/g, '')
+        .slice(0, 80);
 
     const htmlBody = `
 <table style="font-family:sans-serif;font-size:15px;border-collapse:collapse;width:100%">
@@ -109,6 +112,7 @@ export async function onRequestPost({ request, env }) {
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
                 'Content-Type':  'application/json',
+                ...(submissionId ? { 'Idempotency-Key': `contact-${submissionId}` } : {}),
             },
             body: JSON.stringify({
                 from:     fromEmail,
