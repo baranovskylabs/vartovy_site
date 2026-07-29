@@ -201,12 +201,6 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const hp = form.querySelector('input[name="_honey"]');
-      if (hp && hp.value.trim() !== '') {
-        showStatus('form.honeypot', 'error');
-        return;
-      }
-
       if (Date.now() - openedAt < MIN_FILL_TIME_MS) {
         showStatus('form.tooFast', 'error');
         return;

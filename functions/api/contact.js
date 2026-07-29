@@ -60,11 +60,6 @@ export async function onRequestPost({ request, env }) {
         return json({ success: 'false', message: 'Consent is required.' }, 400, origin);
     }
 
-    // ── Honeypot ─────────────────────────────────────────────────────────────
-    if (payload._honey && payload._honey.trim() !== '') {
-        return json({ success: 'true' }, 200, origin);
-    }
-
     // ── IP rate limit via KV ─────────────────────────────────────────────────
     const ip = request.headers.get('CF-Connecting-IP')
         || request.headers.get('X-Forwarded-For')?.split(',')[0].trim()
